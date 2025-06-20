@@ -16,3 +16,7 @@ app.use('/api', sessionsRouter);
 const port = process.env.PORT || 5000;
 
 app.listen(port, () => console.log(`Server started on port ${port}`)); 
+
+const sessionsRouter = require('./routes/sessions');
+app.use('/api', sessionsRouter);
+
