@@ -39,3 +39,21 @@ router.get('/sessions', async (req, res) => {
   }
 });
 
+// POST - Create a sleep session
+router.post('/sessions', async (req, res) => {
+  try {
+    const { userId, startTime, endTime } = req.body;
+
+    const newSession = new SleepSession({
+      userId,
+      startTime,
+      endTime,
+    });
+
+    await newSession.save();
+    res.status(201).json(newSession);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to create session', error });
+  }
+});
+
