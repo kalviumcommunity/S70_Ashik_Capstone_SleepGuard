@@ -28,3 +28,14 @@ router.get('/session/:id', async (req, res) => {
 });
 
 module.exports = router;
+
+// Get all sleep sessions
+router.get('/sessions', async (req, res) => {
+  try {
+    const sessions = await SleepSession.find(); // Assuming SleepSession is your Mongoose model
+    res.json(sessions);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
