@@ -22,3 +22,8 @@ app.use('/api', sessionsRouter);
 
 app.use(express.json());
 
+//ai-llm
+const aiRoutes = require('./routes/ai');
+app.use('/api', aiRoutes);
+
+
