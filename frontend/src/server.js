@@ -26,4 +26,9 @@ app.use(express.json());
 const aiRoutes = require('./routes/ai');
 app.use('/api', aiRoutes);
 
+//lang
+const aiRoute = require("./routes/ai");
+app.use("/api", aiRoute);
+
+
 

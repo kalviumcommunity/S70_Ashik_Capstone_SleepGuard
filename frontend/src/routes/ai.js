@@ -7,6 +7,7 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
+//lang
 router.post('/autocomplete', async (req, res) => {
   try {
     const { prompt } = req.body;
@@ -24,3 +25,5 @@ router.post('/autocomplete', async (req, res) => {
 });
 
 module.exports = router;
+
+
