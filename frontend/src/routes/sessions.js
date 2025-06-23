@@ -57,3 +57,22 @@ router.post('/sessions', async (req, res) => {
   }
 });
 
+// PUT - Update a sleep session by ID
+router.put('/sessions/:id', async (req, res) => {
+  try {
+    const { startTime, endTime } = req.body;
+    const updatedSession = await SleepSession.findByIdAndUpdate(
+      req.params.id,
+      { startTime, endTime },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedSession) {
+      return res.status(404).json({ message: 'Session not found' });
+    }
+
+    res.json(updatedSession);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to update session', error: err });
+  }
+});
