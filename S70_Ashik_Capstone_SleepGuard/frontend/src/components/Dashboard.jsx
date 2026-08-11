@@ -17,18 +17,18 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const profileRes = await axios.get('http://localhost:5000/api/profile');
+        const profileRes = await axios.get('/profile');
         setProfile(profileRes.data);
         setBedtime(profileRes.data.bedtime);
         setWakeTime(profileRes.data.wakeTime);
 
-        const usageRes = await axios.get('http://localhost:5000/api/usage');
+        const usageRes = await axios.get('/usage');
         setUsageData(usageRes.data);
 
-        const notifRes = await axios.get('http://localhost:5000/api/notifications');
+        const notifRes = await axios.get('/notifications');
         setNotifications(notifRes.data);
 
-        const insightsRes = await axios.get('http://localhost:5000/api/reports/insights');
+        const insightsRes = await axios.get('/reports/insights');
         setInsights(insightsRes.data);
       } catch (error) {
         console.error("Error fetching data", error);
@@ -45,7 +45,7 @@ const Dashboard = () => {
   const handleSaveSchedule = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.put('http://localhost:5000/api/profile/bedtime', { bedtime, wakeTime });
+      const res = await axios.put('/profile/bedtime', { bedtime, wakeTime });
       setMessage(res.data.message);
       setTimeout(() => setMessage(''), 3000);
       setProfile({...profile, bedtime, wakeTime});
@@ -65,12 +65,12 @@ const Dashboard = () => {
           { appName: 'Call of Duty', durationMinutes: 20, category: 'Games' }
         ]
       };
-      const res = await axios.post('http://localhost:5000/api/usage/record', mockData);
+      const res = await axios.post('/usage/record', mockData);
       setUsageData([res.data.session, ...usageData]);
       
-      const notifRes = await axios.get('http://localhost:5000/api/notifications');
+      const notifRes = await axios.get('/notifications');
       setNotifications(notifRes.data);
-      const insightsRes = await axios.get('http://localhost:5000/api/reports/insights');
+      const insightsRes = await axios.get('/reports/insights');
       setInsights(insightsRes.data);
 
       setMessage('Usage simulated successfully!');
@@ -82,7 +82,7 @@ const Dashboard = () => {
 
   const markAsRead = async (id) => {
     try {
-      await axios.put(`http://localhost:5000/api/notifications/${id}/read`);
+      await axios.put(`/notifications/${id}/read`);
       setNotifications(notifications.map(n => n._id === id ? { ...n, isRead: true } : n));
     } catch (error) {
       console.error(error);
@@ -119,7 +119,7 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="glass-panel p-6 rounded-2xl border-t border-l border-white/10 flex flex-col justify-between">
             <div>
-              <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Student Profile</div>
+              <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">{user?.role === 'Parent' ? 'Parent Profile' : 'Student Profile'}</div>
               <div className="text-xl font-bold text-white">{user?.name}</div>
               <div className="text-slate-400 text-sm mt-1">{user?.email}</div>
             </div>

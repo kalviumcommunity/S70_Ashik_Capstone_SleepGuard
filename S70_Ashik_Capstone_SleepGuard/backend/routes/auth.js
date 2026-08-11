@@ -57,17 +57,32 @@ router.post('/login', async (req, res) => {
     user.otpExpires = Date.now() + 10 * 60 * 1000;
     await user.save();
 
-    // Setup Nodemailer with Ethereal (Free testing email service)
-    const testAccount = await nodemailer.createTestAccount();
-    const transporter = nodemailer.createTransport({
-      host: testAccount.smtp.host,
-      port: testAccount.smtp.port,
-      secure: testAccount.smtp.secure,
-      auth: {
-        user: testAccount.user,
-        pass: testAccount.pass,
-      },
-    });
+    let transporter;
+    let previewUrl = null;
+    const useRealEmail = process.env.EMAIL_USER && process.env.EMAIL_USER !== 'your_email@gmail.com';
+
+    if (useRealEmail) {
+      // Use real email service (e.g. Gmail)
+      transporter = nodemailer.createTransport({
+        service: 'gmail', 
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+    } else {
+      // Fallback: Setup Nodemailer with Ethereal (Free testing email service)
+      const testAccount = await nodemailer.createTestAccount();
+      transporter = nodemailer.createTransport({
+        host: testAccount.smtp.host,
+        port: testAccount.smtp.port,
+        secure: testAccount.smtp.secure,
+        auth: {
+          user: testAccount.user,
+          pass: testAccount.pass,
+        },
+      });
+    }
 
     const info = await transporter.sendMail({
       from: '"SleepGuard Security" <security@sleepguard.app>',
@@ -77,7 +92,9 @@ router.post('/login', async (req, res) => {
       html: `<b>Your OTP is: <span style="font-size:20px; color:#4f46e5">${otp}</span></b><br>It will expire in 10 minutes.`
     });
 
-    const previewUrl = nodemailer.getTestMessageUrl(info);
+    if (!useRealEmail) {
+      previewUrl = nodemailer.getTestMessageUrl(info);
+    }
 
     res.json({ 
       message: 'OTP sent to your email', 
