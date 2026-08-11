@@ -1,4 +1,3 @@
-
 const express = require('express');
 const router = express.Router();
 const SleepSession = require('../models/SleepSession');
@@ -11,9 +10,9 @@ router.post('/session', async (req, res) => {
       startTime: req.body.startTime, 
       endTime: req.body.endTime 
     });
-    res.json(session);
+    res.status(201).json(session);
   } catch (err) {
-    res.status(500).json({error:'Server Error'})
+    res.status(500).json({error:'Server Error', details: err.message})
   }
 });
 
@@ -21,9 +20,10 @@ router.post('/session', async (req, res) => {
 router.get('/session/:id', async (req, res) => {
   try {
     const session = await SleepSession.findById(req.params.id);
+    if (!session) return res.status(404).json({error: 'Not Found'});
     res.json(session);
   } catch (err) {
-    res.status(500).json({error:'Server Error'})
+    res.status(500).json({error:'Server Error', details: err.message})
   }
 });
 
