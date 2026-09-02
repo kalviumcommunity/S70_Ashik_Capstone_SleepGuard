@@ -1,53 +1,149 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #3b82f6;
-  --color-secondary: #10b981;
-  --color-background: #0f172a; /* Slate 900 */
-  --color-surface: #1e293b; /* Slate 800 */
+  --color-primary: #6366f1;
+  --color-primary-hover: #4f46e5;
+  --color-background: #090d16;
+  --color-surface: #0f172a;
+  --color-surface-hover: #1e293b;
+  --color-border: #1e293b;
 }
 
-body {
-  margin: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: var(--color-background);
+@layer base {
+  *, ::after, ::before {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #090d16;
+    color: #f1f5f9;
+    line-height: 1.5;
+  }
+
+  input, button, select, textarea {
+    font-family: inherit;
+  }
+}
+
+/* Professional SaaS Card and Surface Styling */
+.saas-card {
+  background-color: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.saas-card:hover {
+  border-color: #334155;
+}
+
+.saas-card-subtle {
+  background-color: #111a2e;
+  border: 1px solid #1e293b;
+  border-radius: 0.5rem;
+}
+
+/* Form Inputs */
+.saas-input {
+  background-color: #090d16;
+  border: 1px solid #334155;
   color: #f8fafc;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-/* Custom Utilities for Premium Look */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+.saas-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
 }
 
-.floating-blob {
-  animation: float 10s infinite ease-in-out alternate;
+/* Buttons */
+.saas-btn-primary {
+  background-color: #4f46e5;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: background-color 0.15s ease, transform 0.05s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-@keyframes float {
-  0% { transform: translateY(0px) scale(1); }
-  50% { transform: translateY(-20px) scale(1.05); }
-  100% { transform: translateY(0px) scale(1); }
+.saas-btn-primary:hover {
+  background-color: #4338ca;
 }
 
-/* Hide scrollbar for clean dashboard */
+.saas-btn-primary:active {
+  transform: translateY(1px);
+}
+
+.saas-btn-secondary {
+  background-color: #1e293b;
+  color: #e2e8f0;
+  font-weight: 500;
+  font-size: 0.875rem;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid #334155;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.saas-btn-secondary:hover {
+  background-color: #283548;
+  border-color: #475569;
+  color: #ffffff;
+}
+
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #090d16;
 }
 ::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: 10px;
+  background: #1e293b;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #334155;
 }
+
+/* Moving Marquee Ticker */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 20s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+

@@ -1,161 +1,630 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
 const Landing = () => {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [screenTime, setScreenTime] = useState(30);
+  const { user } = useContext(AuthContext);
 
-  // Calculate mock score
-  const score = Math.max(0, Math.round(100 - (screenTime * 0.6)));
-  let scoreColor = 'text-emerald-400';
-  let scoreRing = 'stroke-emerald-400';
-  if (score < 80 && score >= 50) {
-    scoreColor = 'text-yellow-400';
-    scoreRing = 'stroke-yellow-400';
-  } else if (score < 50) {
-    scoreColor = 'text-red-400';
-    scoreRing = 'stroke-red-400';
-  }
+  // Interactive Device Simulator State
+  const [selectedApps, setSelectedApps] = useState(['Instagram', 'TikTok']);
+  const appDatabase = {
+    'Instagram': { category: 'Social Media', delay: 25, blueLight: 85, icon: '📱', risk: 'High' },
+    'TikTok': { category: 'Social Media', delay: 35, blueLight: 95, icon: '🎬', risk: 'Critical' },
+    'YouTube': { category: 'Entertainment', delay: 30, blueLight: 80, icon: '▶️', risk: 'High' },
+    'Call of Duty': { category: 'Gaming', delay: 45, blueLight: 90, icon: '🎮', risk: 'Critical' },
+    'Duolingo': { category: 'Educational', delay: 5, blueLight: 30, icon: '🦉', risk: 'Low' },
+    'Notion': { category: 'Productivity', delay: 8, blueLight: 25, icon: '📝', risk: 'Low' },
+    'Reddit': { category: 'Social Media', delay: 20, blueLight: 70, icon: '💬', risk: 'Moderate' },
+  };
+
+  const toggleApp = (appName) => {
+    if (selectedApps.includes(appName)) {
+      setSelectedApps(selectedApps.filter(a => a !== appName));
+    } else {
+      setSelectedApps([...selectedApps, appName]);
+    }
+  };
+
+  const totalDelay = selectedApps.reduce((sum, app) => sum + (appDatabase[app]?.delay || 0), 0);
+  const avgBlueLight = selectedApps.length === 0 ? 0 : Math.round(selectedApps.reduce((sum, app) => sum + (appDatabase[app]?.blueLight || 0), 0) / selectedApps.length);
+  const hasNonEdu = selectedApps.some(app => appDatabase[app]?.category !== 'Educational');
+
+  // Interactive Sleep Cycle Calculator State
+  const [wakeTime, setWakeTime] = useState('07:00');
+  const calculateBedtimes = (wake) => {
+    const [hours, mins] = wake.split(':').map(Number);
+    const wakeDate = new Date();
+    wakeDate.setHours(hours, mins, 0, 0);
+
+    const cycles = [6, 5, 4]; // 9h (6 cycles), 7.5h (5 cycles), 6h (4 cycles)
+    return cycles.map(cycleCount => {
+      const bedDate = new Date(wakeDate.getTime() - (cycleCount * 90 + 15) * 60000); // 90 min cycle + 15 min buffer
+      return {
+        cycles: cycleCount,
+        hours: (cycleCount * 1.5).toFixed(1),
+        time: bedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        recommended: cycleCount === 5
+      };
+    });
+  };
+  const calculatedBedtimes = calculateBedtimes(wakeTime);
+
+  // Interactive Habit Quiz State
+  const [quizStep, setQuizStep] = useState(0);
+  const [quizAnswers, setQuizAnswers] = useState({});
+  const quizQuestions = [
+    {
+      question: "When do you typically stop looking at your mobile device?",
+      options: [
+        { label: "1 hour before scheduled bedtime", points: 10 },
+        { label: "Right as I get into bed", points: 40 },
+        { label: "1 to 2 hours after getting into bed", points: 80 }
+      ]
+    },
+    {
+      question: "What is your primary late-night digital activity?",
+      options: [
+        { label: "Infinite scrolling (Shorts, Reels, TikTok)", type: "Late-Night Scroller" },
+        { label: "Competitive mobile gaming & voice chat", type: "Night-Owl Gamer" },
+        { label: "Last-minute study sessions & homework", type: "Late-Night Scholar" }
+      ]
+    },
+    {
+      question: "How do you feel when your morning alarm sounds?",
+      options: [
+        { label: "Refreshed and alert", score: "Optimal" },
+        { label: "Groggy, needing 2+ snoozes", score: "Moderate Fatigue" },
+        { label: "Severely exhausted with eye strain", score: "High Sleep Debt" }
+      ]
+    }
+  ];
+
+  // Interactive Audience Tabs
+  const [activeTab, setActiveTab] = useState('students');
+
+  // Ambient Sound Generator (Web Audio API)
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [activeSound, setActiveSound] = useState('rain');
+  const audioContextRef = useRef(null);
+  const activeNodesRef = useRef([]);
+
+  const stopAudio = () => {
+    activeNodesRef.current.forEach(node => {
+      try { node.stop(); node.disconnect(); } catch (_e) {}
+    });
+    activeNodesRef.current = [];
+    setIsPlayingAudio(false);
+  };
+
+  const playSound = (soundType) => {
+    stopAudio();
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!audioContextRef.current) {
+        audioContextRef.current = new AudioContext();
+      }
+      const ctx = audioContextRef.current;
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
+
+      if (soundType === 'tone') {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(432, ctx.currentTime);
+        gain.gain.setValueAtTime(0.06, ctx.currentTime);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        activeNodesRef.current = [osc];
+      } else {
+        const bufferSize = ctx.sampleRate * 2;
+        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        let lastOut = 0.0;
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          output[i] = (lastOut + (0.02 * white)) / 1.02;
+          lastOut = output[i];
+          output[i] *= 2.5;
+        }
+
+        const whiteNoise = ctx.createBufferSource();
+        whiteNoise.buffer = noiseBuffer;
+        whiteNoise.loop = true;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(soundType === 'ocean' ? 350 : 800, ctx.currentTime);
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+
+        whiteNoise.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+
+        whiteNoise.start();
+        activeNodesRef.current = [whiteNoise];
+      }
+
+      setActiveSound(soundType);
+      setIsPlayingAudio(true);
+    } catch (e) {
+      console.error("Audio initialization error", e);
+    }
+  };
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
-      // Calculate offset based on center of screen
-      const x = (e.clientX / window.innerWidth - 0.5) * 40; 
-      const y = (e.clientY / window.innerHeight - 0.5) * 40;
-      setMousePos({ x, y });
+    return () => {
+      stopAudio();
     };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans overflow-x-hidden relative selection:bg-indigo-500/30">
-      {/* Interactive Parallax Background */}
-      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none transition-transform duration-700 ease-out"
-           style={{ transform: `translate(${mousePos.x}px, ${mousePos.y}px)` }}>
-        <div className="absolute top-[-20%] left-[-10%] w-[50vw] h-[50vw] bg-indigo-600/20 rounded-full blur-[120px] mix-blend-screen floating-blob"></div>
-        <div className="absolute bottom-[-20%] right-[-10%] w-[60vw] h-[60vw] bg-purple-600/20 rounded-full blur-[120px] mix-blend-screen floating-blob" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute top-[40%] left-[60%] w-[30vw] h-[30vw] bg-emerald-600/10 rounded-full blur-[100px] mix-blend-screen floating-blob" style={{ animationDelay: '4s' }}></div>
-      </div>
-
-      {/* Navigation */}
-      <nav className="relative z-10 flex justify-between items-center px-4 md:px-8 py-6 max-w-7xl mx-auto">
-        <div className="flex items-center gap-3 hover:scale-105 transition-transform cursor-pointer">
-          <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+    <div className="min-h-screen bg-[#090d16] text-slate-100 font-sans selection:bg-indigo-600/30">
+      
+      {/* Top Navigation */}
+      <nav className="sticky top-0 z-30 bg-[#090d16]/90 backdrop-blur-md border-b border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-8">
+            <Link to="/" className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold shadow-sm">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-300 to-fuchsia-400 text-base tracking-tight">SleepGuard</span>
+                <span className="text-[11px] font-medium text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700">SaaS v2.4</span>
+              </div>
+            </Link>
+            
+            <div className="hidden md:flex items-center gap-6 text-sm text-slate-400 font-medium">
+              <a href="#simulator" className="hover:text-slate-200 transition-colors">Screen Simulator</a>
+              <a href="#calculator" className="hover:text-slate-200 transition-colors">REM Calculator</a>
+              <a href="#quiz" className="hover:text-slate-200 transition-colors">Habit Diagnostic</a>
+              <a href="#features" className="hover:text-slate-200 transition-colors">Platform Features</a>
+            </div>
           </div>
-          <span className="text-xl font-bold tracking-tight text-white">SleepGuard</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <Link to="/login" className="text-sm font-medium text-slate-300 hover:text-white transition">Sign In</Link>
-          <Link to="/register" className="px-4 py-2 md:px-5 md:py-2.5 text-sm font-bold bg-white text-slate-900 rounded-lg hover:bg-slate-200 hover:scale-105 active:scale-95 transition shadow-xl shadow-white/10">Try it out</Link>
+
+          <div className="flex items-center gap-3">
+            {user ? (
+              <Link to="/dashboard" className="saas-btn-primary">
+                Open Console
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+              </Link>
+            ) : (
+              <>
+                <Link to="/login" className="text-sm font-medium text-slate-300 hover:text-white px-3 py-2 rounded-md hover:bg-slate-800 transition-colors">
+                  Sign In
+                </Link>
+                <Link to="/register" className="saas-btn-primary">
+                  Get Started
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <main className="relative z-10 flex flex-col items-center justify-center min-h-[75vh] px-4 text-center max-w-5xl mx-auto">
-        <div className="inline-block mb-6 px-4 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 backdrop-blur-md animate-pulse">
-          <span className="text-xs font-bold tracking-wider text-indigo-300 uppercase cursor-default">🌙 Build better bedtime habits</span>
+      <section className="pt-20 pb-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-slate-800 bg-slate-900/90 text-xs font-medium text-slate-300 mb-8">
+          <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>Intelligent Sleep Hygiene & Parental Telemetry Platform</span>
         </div>
-        
-        <h1 className="text-4xl md:text-7xl font-extrabold tracking-tight mb-8 leading-tight">
-          Wake up feeling like <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-emerald-400 hover:opacity-80 transition-opacity cursor-default">yourself again.</span>
+
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-100 tracking-tight leading-[1.15] mb-6">
+          Reclaim restorative sleep from <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-300 to-fuchsia-400">
+            late-night digital drag.
+          </span>
         </h1>
-        
-        <p className="text-lg md:text-xl text-slate-400 mb-12 max-w-2xl leading-relaxed">
-          We've all been there—scrolling late at night when we should be sleeping. SleepGuard helps you track what's keeping you awake so you can finally get the rest you actually need.
+
+        <p className="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed mb-10">
+          SleepGuard monitors midnight device usage, distinguishes study apps from recreational doomscrolling, alerts parents on curfew violations, and optimizes 90-minute REM sleep cycles.
         </p>
 
-        {/* Interactive Score Predictor Widget */}
-        <div className="w-full max-w-md bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 mb-12 shadow-2xl hover:border-indigo-500/30 transition-colors duration-500 text-left">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider">How scrolling affects sleep</h3>
-            <span className="text-xs text-indigo-400 bg-indigo-500/10 px-2 py-1 rounded">Interactive</span>
-          </div>
-          
-          <div className="flex items-center gap-6">
-            <div className="flex-1">
-              <label className="text-xs text-slate-400 block mb-2">Late-Night Screen Time: <span className="text-white font-bold">{screenTime} mins</span></label>
-              <input 
-                type="range" 
-                min="0" 
-                max="120" 
-                value={screenTime} 
-                onChange={(e) => setScreenTime(e.target.value)}
-                className="w-full accent-indigo-500 cursor-pointer"
-              />
-              <p className="text-[10px] text-slate-500 mt-2">Drag to see how late-night phone use impacts your sleep score.</p>
-            </div>
-            
-            <div className="w-16 h-16 shrink-0 relative flex items-center justify-center">
-              <svg className="w-full h-full transform -rotate-90">
-                 <circle cx="32" cy="32" r="28" stroke="currentColor" strokeWidth="6" fill="none" className="text-slate-800" />
-                 <circle cx="32" cy="32" r="28" stroke="currentColor" strokeWidth="6" fill="none" className={scoreRing} strokeDasharray="175" strokeDashoffset={175 - (175 * score) / 100} style={{ transition: 'stroke-dashoffset 0.3s ease' }} />
-               </svg>
-               <span className={`absolute font-bold text-lg ${scoreColor}`}>{score}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-5 w-full sm:w-auto">
-          <Link to="/register" className="px-8 py-4 text-base font-bold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 hover:scale-105 active:scale-95 text-white rounded-xl transition-all shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 group">
-            Create an account
-            <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+        <div className="flex flex-wrap items-center justify-center gap-3.5 mb-14">
+          <Link to="/register" className="saas-btn-primary px-6 py-2.5 text-sm">
+            Start Free Protection
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
           </Link>
-          <a href="#features" className="px-8 py-4 text-base font-bold bg-slate-800/50 hover:bg-slate-800 border border-slate-700 text-white rounded-xl hover:scale-105 active:scale-95 transition-all backdrop-blur-sm flex items-center justify-center">
-            How it works
-          </a>
+          <Link to="/login" className="saas-btn-secondary px-6 py-2.5 text-sm">
+            Explore 1-Click Demo
+          </Link>
         </div>
-      </main>
 
-      {/* Features Grid */}
-      <section id="features" className="relative z-10 py-20 px-4 max-w-7xl mx-auto mt-10 group">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold mb-4 group-hover:text-indigo-300 transition-colors duration-500">Helping you sleep better</h2>
-          <p className="text-slate-400 max-w-2xl mx-auto">Everything you need to understand your habits and get to bed on time.</p>
+        {/* Ambient Bedtime Synthesizer Bar */}
+        <div className="saas-card max-w-xl mx-auto p-3 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 text-left pl-2">
+            <span className="text-base">🌙</span>
+            <div>
+              <div className="text-xs font-semibold text-slate-200">Bedtime Wind-Down Audio</div>
+              <div className="text-[11px] text-slate-400">In-browser binaural and filtered relaxation tones</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => isPlayingAudio && activeSound === 'rain' ? stopAudio() : playSound('rain')}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${isPlayingAudio && activeSound === 'rain' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+            >
+              🌧️ Rain
+            </button>
+            <button
+              onClick={() => isPlayingAudio && activeSound === 'ocean' ? stopAudio() : playSound('ocean')}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${isPlayingAudio && activeSound === 'ocean' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+            >
+              🌊 Waves
+            </button>
+            <button
+              onClick={() => isPlayingAudio && activeSound === 'tone' ? stopAudio() : playSound('tone')}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${isPlayingAudio && activeSound === 'tone' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+            >
+              ✨ 432Hz
+            </button>
+          </div>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      </section>
+
+      {/* Key Metric Highlights - Infinite Moving Marquee */}
+      <section className="py-6 border-y border-slate-800 bg-[#0c1220] relative overflow-hidden">
+        {/* Left & Right Gradient Fade Masks */}
+        <div className="absolute left-0 inset-y-0 w-24 bg-gradient-to-r from-[#0c1220] to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute right-0 inset-y-0 w-24 bg-gradient-to-l from-[#0c1220] to-transparent z-10 pointer-events-none"></div>
+
+        <div className="animate-marquee flex items-center gap-16">
+          {/* First set of items */}
+          <div className="flex items-center gap-16 shrink-0">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">85%</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">Average Goal Adherence</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">&lt; 15 min</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">Sleep Onset Latency</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">Real-Time</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">Parental Curfew Telemetry</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">2FA OTP</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">Enterprise Account Security</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">90-Min Cycles</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">REM Sleep Optimization</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">Whitelisted</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">Study App Autonomy</div>
+            </div>
+          </div>
+
+          {/* Duplicate set of items for seamless infinite loop */}
+          <div className="flex items-center gap-16 shrink-0">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">85%</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">Average Goal Adherence</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">&lt; 15 min</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">Sleep Onset Latency</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">Real-Time</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">Parental Curfew Telemetry</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">2FA OTP</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">Enterprise Account Security</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">90-Min Cycles</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">REM Sleep Optimization</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">Whitelisted</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">Study App Autonomy</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 📱 Interactive Lab 01: Late-Night Screen Impact Simulator */}
+      <section id="simulator" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">Interactive Telemetry Tool</span>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 mt-1">
+            Late-Night Screen <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-300 to-indigo-300">Disruption Simulator</span>
+          </h2>
+          <p className="text-slate-400 text-sm mt-2">
+            Select mobile applications to simulate late-night screen time and inspect real-time melatonin delay, blue light burden, and automated parent alerting.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start max-w-5xl mx-auto">
           
-          <div className="glass-panel p-8 rounded-3xl border-t border-l border-white/10 hover:-translate-y-4 hover:shadow-2xl hover:shadow-indigo-500/20 transition-all duration-300 cursor-default">
-            <div className="w-14 h-14 bg-indigo-500/20 rounded-2xl flex items-center justify-center mb-6 text-indigo-400 hover:scale-110 hover:rotate-3 transition-transform duration-300">
-              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+          {/* App Selector Panel */}
+          <div className="lg:col-span-6 saas-card p-6">
+            <div className="flex justify-between items-center pb-4 mb-4 border-b border-slate-800">
+              <div>
+                <h3 className="text-sm font-semibold text-slate-200">Active Mobile Apps</h3>
+                <p className="text-xs text-slate-400">Toggle apps to simulate midnight usage</p>
+              </div>
+              <span className="text-xs font-mono font-medium text-slate-400 bg-slate-900 px-2.5 py-1 rounded border border-slate-800">
+                00:45 AM Telemetry
+              </span>
             </div>
-            <h3 className="text-xl font-bold mb-3 text-white">Know where your time goes</h3>
-            <p className="text-slate-400 leading-relaxed text-sm">
-              We gently track late-night app usage so you can see exactly which apps are keeping you awake past your bedtime.
-            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              {Object.keys(appDatabase).map(app => {
+                const isSelected = selectedApps.includes(app);
+                const info = appDatabase[app];
+                return (
+                  <button
+                    key={app}
+                    onClick={() => toggleApp(app)}
+                    className={`p-3 rounded-lg flex items-center justify-between text-left transition-all border text-xs ${isSelected ? 'bg-indigo-950/40 border-indigo-500/60 text-slate-100 shadow-sm' : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:border-slate-700'}`}
+                  >
+                    <div className="flex items-center gap-2 truncate">
+                      <span className="text-base">{info.icon}</span>
+                      <div className="truncate">
+                        <div className="font-semibold truncate">{app}</div>
+                        <div className={`text-[10px] ${info.category === 'Educational' ? 'text-emerald-400' : 'text-slate-400'}`}>
+                          {info.category}
+                        </div>
+                      </div>
+                    </div>
+                    <span className={`w-2 h-2 rounded-full ${isSelected ? 'bg-indigo-400' : 'bg-slate-700'}`}></span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          <div className="glass-panel p-8 rounded-3xl border-t border-l border-white/10 hover:-translate-y-4 hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 cursor-default relative overflow-hidden group/card">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl group-hover/card:scale-150 transition-transform duration-700"></div>
-            <div className="w-14 h-14 bg-purple-500/20 rounded-2xl flex items-center justify-center mb-6 text-purple-400 hover:scale-110 hover:-rotate-3 transition-transform duration-300">
-              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-            </div>
-            <h3 className="text-xl font-bold mb-3 text-white">Friendly, personalized tips</h3>
-            <p className="text-slate-400 leading-relaxed text-sm">
-              Get simple advice based on your daily habits to help you fall asleep faster and wake up feeling refreshed.
-            </p>
-          </div>
+          {/* Real-Time Analytics Output */}
+          <div className="lg:col-span-6 space-y-4">
+            <div className="saas-card p-6 space-y-6">
+              <div className="flex justify-between items-center pb-3 border-b border-slate-800">
+                <h3 className="text-sm font-semibold text-slate-200">Live Disruption Telemetry</h3>
+                <span className={`text-xs font-semibold px-2.5 py-0.5 rounded border ${hasNonEdu ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
+                  {hasNonEdu ? '⚠️ Parent Notification Active' : '✅ Compliant (Study Mode)'}
+                </span>
+              </div>
 
-          <div className="glass-panel p-8 rounded-3xl border-t border-l border-white/10 hover:-translate-y-4 hover:shadow-2xl hover:shadow-emerald-500/20 transition-all duration-300 cursor-default">
-            <div className="w-14 h-14 bg-emerald-500/20 rounded-2xl flex items-center justify-center mb-6 text-emerald-400 hover:scale-110 hover:rotate-3 transition-transform duration-300">
-              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="saas-card-subtle p-4">
+                  <div className="text-xs text-slate-400 font-medium">Estimated Sleep Delay</div>
+                  <div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-400 mt-1">+{totalDelay} <span className="text-xs text-slate-400 font-normal">mins</span></div>
+                  <div className="text-[11px] text-slate-500 mt-1">Melatonin suppression onset</div>
+                </div>
+
+                <div className="saas-card-subtle p-4">
+                  <div className="text-xs text-slate-400 font-medium">Blue Light Load</div>
+                  <div className={`text-2xl font-bold mt-1 ${avgBlueLight > 60 ? 'text-amber-400' : 'text-emerald-400'}`}>{avgBlueLight}%</div>
+                  <div className="text-[11px] text-slate-500 mt-1">Circadian phase delay</div>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex justify-between text-xs font-medium mb-1.5">
+                  <span className="text-slate-300">Sleep Quality Impact</span>
+                  <span className={totalDelay > 40 ? 'text-rose-400 font-semibold' : 'text-emerald-400 font-semibold'}>
+                    {Math.min(100, Math.round(totalDelay * 1.2))}% Impaired
+                  </span>
+                </div>
+                <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                  <div 
+                    className={`h-full transition-all duration-300 ${totalDelay > 40 ? 'bg-rose-500' : 'bg-indigo-500'}`}
+                    style={{ width: `${Math.min(100, Math.max(8, totalDelay * 1.2))}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800 text-xs text-slate-300 flex items-start gap-2.5">
+                <span className="text-indigo-400 font-bold">ℹ️</span>
+                <p className="leading-relaxed">
+                  {hasNonEdu 
+                    ? `SleepGuard's late-night monitoring daemon flags recreational apps past the configured bedtime limit and sends instant parent alerts.`
+                    : `Study apps like Duolingo & Notion are whitelisted to protect student study autonomy without generating false-positive bedtime alarms.`}
+                </p>
+              </div>
             </div>
-            <h3 className="text-xl font-bold mb-3 text-white">Keep parents in the loop</h3>
-            <p className="text-slate-400 leading-relaxed text-sm">
-              For younger users, parents can get a quick nudge if phones are being used for gaming or social media way past bedtime.
-            </p>
           </div>
 
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-slate-800/50 py-8 text-center text-slate-500 text-sm mt-10">
-        <p>© 2026 SleepGuard. Because good days start at night.</p>
+      {/* ⏰ Interactive Lab 02: 90-Minute REM Cycle Optimizer */}
+      <section id="calculator" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800">
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">Sleep Science Utility</span>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 mt-1">
+            90-Minute REM <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-300 to-amber-300">Sleep Cycle Calculator</span>
+          </h2>
+          <p className="text-slate-400 text-sm mt-2">
+            Human sleep operates in 90-minute ultradian cycles. Waking up midway through deep non-REM stages causes sleep inertia. Select your wake-up goal:
+          </p>
+        </div>
+
+        <div className="max-w-3xl mx-auto saas-card p-6 sm:p-8 space-y-6">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-slate-900 rounded-lg border border-slate-800">
+            <div>
+              <label className="text-xs font-semibold uppercase tracking-wider text-slate-300 block mb-0.5">Target Wake-Up Time</label>
+              <span className="text-xs text-slate-500">When does your morning alarm sound?</span>
+            </div>
+            <input 
+              type="time" 
+              value={wakeTime}
+              onChange={(e) => setWakeTime(e.target.value)}
+              className="saas-input text-base font-bold text-indigo-300 px-3 py-2"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {calculatedBedtimes.map((item, idx) => (
+              <div 
+                key={idx} 
+                className={`p-4 rounded-lg border text-center transition-all ${item.recommended ? 'bg-indigo-950/30 border-indigo-500/50 shadow-sm' : 'bg-slate-900/60 border-slate-800'}`}
+              >
+                {item.recommended && (
+                  <span className="text-[10px] font-bold uppercase tracking-wider bg-indigo-600 text-white px-2 py-0.5 rounded inline-block mb-2">
+                    Recommended
+                  </span>
+                )}
+                <div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-indigo-200 to-fuchsia-300">{item.time}</div>
+                <div className="text-xs text-indigo-400 font-medium mt-1">{item.hours} hrs ({item.cycles} complete cycles)</div>
+                <div className="text-[11px] text-slate-500 mt-1.5">Includes 15-min sleep onset buffer</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 🧠 Interactive Lab 03: 30-Second Sleep Habit Diagnostic */}
+      <section id="quiz" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800">
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">Interactive Assessment</span>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 mt-1">
+            Sleep Quality & <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-300">Screen Diagnostic</span>
+          </h2>
+          <p className="text-slate-400 text-sm mt-2">
+            Complete a 30-second assessment to diagnose late-night digital bottlenecks and receive personalized sleep hygiene recommendations.
+          </p>
+        </div>
+
+        <div className="max-w-2xl mx-auto saas-card p-6 sm:p-8">
+          {quizStep < quizQuestions.length ? (
+            <div className="space-y-5">
+              <div className="flex justify-between items-center text-xs font-semibold text-slate-400 pb-3 border-b border-slate-800">
+                <span>Step {quizStep + 1} of {quizQuestions.length}</span>
+                <span className="text-indigo-400">{Math.round(((quizStep + 1) / quizQuestions.length) * 100)}% Complete</span>
+              </div>
+
+              <h3 className="text-base font-semibold text-slate-100">{quizQuestions[quizStep].question}</h3>
+
+              <div className="space-y-2.5">
+                {quizQuestions[quizStep].options.map((opt, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      setQuizAnswers({ ...quizAnswers, [quizStep]: opt });
+                      setQuizStep(quizStep + 1);
+                    }}
+                    className="w-full text-left p-3.5 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-xs font-medium text-slate-200 transition flex justify-between items-center group"
+                  >
+                    <span>{opt.label}</span>
+                    <span className="text-indigo-400 group-hover:translate-x-0.5 transition-transform">→</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="text-center space-y-5">
+              <div className="w-12 h-12 bg-indigo-600/20 text-indigo-400 rounded-lg mx-auto flex items-center justify-center text-xl border border-indigo-500/30">
+                📊
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-100">Diagnosis: <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-orange-400 to-rose-400">{quizAnswers[1]?.type || 'Late-Night Digital Scroller'}</span></h3>
+                <p className="text-slate-400 text-xs leading-relaxed max-w-md mx-auto mt-2">
+                  Evening stimulation is suppressing your melatonin cycle and pushing REM sleep into early morning hours. SleepGuard can enforce automated curfews and bedtime wind-down reminders.
+                </p>
+              </div>
+              <div className="flex justify-center gap-3 pt-2">
+                <Link to="/register" className="saas-btn-primary text-xs">
+                  Set Up Sleep Defense
+                </Link>
+                <button onClick={() => { setQuizStep(0); setQuizAnswers({}); }} className="saas-btn-secondary text-xs">
+                  Retake Diagnostic
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* 🎯 Audience Perspectives (Tabs) */}
+      <section id="features" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800">
+        <div className="text-center max-w-2xl mx-auto mb-8">
+          <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">Tailored Experience</span>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 mt-1">Built for Students, <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-300 to-fuchsia-400">Trusted by Parents</span></h2>
+        </div>
+
+        <div className="flex justify-center mb-8">
+          <div className="bg-slate-900 p-1 rounded-lg border border-slate-800 inline-flex gap-1">
+            <button
+              onClick={() => setActiveTab('students')}
+              className={`px-4 py-2 rounded-md text-xs font-semibold transition-colors ${activeTab === 'students' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-slate-200'}`}
+            >
+              🎓 For Students & Teens
+            </button>
+            <button
+              onClick={() => setActiveTab('parents')}
+              className={`px-4 py-2 rounded-md text-xs font-semibold transition-colors ${activeTab === 'parents' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-slate-200'}`}
+            >
+              🛡️ For Parents & Guardians
+            </button>
+          </div>
+        </div>
+
+        <div className="max-w-4xl mx-auto">
+          {activeTab === 'students' ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="saas-card p-5">
+                <div className="text-indigo-400 font-bold text-lg mb-2">01</div>
+                <h4 className="text-sm font-semibold text-slate-200">Study Autonomy</h4>
+                <p className="text-xs text-slate-400 mt-1 leading-relaxed">Whitelists homework and educational apps during late hours without sending parental alerts.</p>
+              </div>
+              <div className="saas-card p-5">
+                <div className="text-indigo-400 font-bold text-lg mb-2">02</div>
+                <h4 className="text-sm font-semibold text-slate-200">Wind-Down Pacing</h4>
+                <p className="text-xs text-slate-400 mt-1 leading-relaxed">Built-in 4-7-8 breathing pacers and synthesized delta tones to decompress before sleep.</p>
+              </div>
+              <div className="saas-card p-5">
+                <div className="text-indigo-400 font-bold text-lg mb-2">03</div>
+                <h4 className="text-sm font-semibold text-slate-200">REM Wakeup Schedule</h4>
+                <p className="text-xs text-slate-400 mt-1 leading-relaxed">Smart bedtime suggestions to wake up at the conclusion of natural 90-minute sleep cycles.</p>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="saas-card p-5">
+                <div className="text-indigo-400 font-bold text-lg mb-2">01</div>
+                <h4 className="text-sm font-semibold text-slate-200">Midnight Alerts</h4>
+                <p className="text-xs text-slate-400 mt-1 leading-relaxed">Instant notifications when games or social media feeds run past designated bedtime curfews.</p>
+              </div>
+              <div className="saas-card p-5">
+                <div className="text-indigo-400 font-bold text-lg mb-2">02</div>
+                <h4 className="text-sm font-semibold text-slate-200">7-Day Trends</h4>
+                <p className="text-xs text-slate-400 mt-1 leading-relaxed">Executive weekly health scores and screen-time adherence graphs for informed parenting.</p>
+              </div>
+              <div className="saas-card p-5">
+                <div className="text-indigo-400 font-bold text-lg mb-2">03</div>
+                <h4 className="text-sm font-semibold text-slate-200">Remote Curfew Controls</h4>
+                <p className="text-xs text-slate-400 mt-1 leading-relaxed">Easily adjust bedtime limits, wake times, and app locks directly from the parent portal.</p>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Clean SaaS Footer */}
+      <footer className="border-t border-slate-800 bg-[#060a12] py-8 text-xs text-slate-500">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-slate-300">SleepGuard</span>
+            <span>• Capstone Sleep Hygiene & Screen Time Security</span>
+          </div>
+          <div className="flex items-center gap-6">
+            <Link to="/login" className="hover:text-slate-300">Sign In</Link>
+            <Link to="/register" className="hover:text-slate-300">Register</Link>
+            <span>2FA OTP Protected</span>
+          </div>
+        </div>
       </footer>
+
     </div>
   );
 };
