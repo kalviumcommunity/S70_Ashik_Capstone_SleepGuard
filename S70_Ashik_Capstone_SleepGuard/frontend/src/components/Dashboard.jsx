@@ -16,9 +16,54 @@ const Dashboard = () => {
   const [insights, setInsights] = useState(null);
   const [simulating, setSimulating] = useState(false);
 
+  // Interactive Wind-Down & 4-7-8 Breathing Mode
+  const [isWindDownActive, setIsWindDownActive] = useState(false);
+  const [breathPhase, setBreathPhase] = useState('Inhale'); // Inhale, Hold, Exhale
+  const [breathTimer, setBreathTimer] = useState(4);
+
+  // Interactive App Permission Toggle State
+  const [appLocks, setAppLocks] = useState({
+    'Instagram': true,
+    'TikTok': true,
+    'Call of Duty Mobile': true,
+    'YouTube': false,
+    'Duolingo': false
+  });
+
+  const toggleAppLock = (appName) => {
+    setAppLocks(prev => ({ ...prev, [appName]: !prev[appName] }));
+    setMessage(`${appName} lock policy updated.`);
+    setTimeout(() => setMessage(''), 2500);
+  };
+
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
+  // 4-7-8 Breathing Loop
+  useEffect(() => {
+    if (!isWindDownActive) return;
+
+    const interval = setInterval(() => {
+      setBreathTimer((prev) => {
+        if (prev <= 1) {
+          if (breathPhase === 'Inhale') {
+            setBreathPhase('Hold');
+            return 7;
+          } else if (breathPhase === 'Hold') {
+            setBreathPhase('Exhale');
+            return 8;
+          } else {
+            setBreathPhase('Inhale');
+            return 4;
+          }
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isWindDownActive, breathPhase]);
 
   const fetchDashboardData = async () => {
     try {
@@ -173,6 +218,12 @@ const Dashboard = () => {
           </div>
           
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsWindDownActive(true)}
+              className="px-3.5 py-2 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 hover:text-white text-xs font-bold rounded-xl transition border border-indigo-500/40 flex items-center gap-1.5 animate-glow"
+            >
+              <span>🌙</span> Wind-Down Mode
+            </button>
             <div className="text-right hidden sm:block">
               <div className="text-sm font-semibold text-white">{user?.name}</div>
               <div className="text-xs text-slate-400">{user?.email}</div>
@@ -185,6 +236,52 @@ const Dashboard = () => {
             </button>
           </div>
         </header>
+
+        {/* 4-7-8 Breathing Wind Down Interactive Modal */}
+        {isWindDownActive && (
+          <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-2xl flex items-center justify-center p-4">
+            <div className="max-w-md w-full glass-panel p-8 rounded-3xl border border-indigo-500/40 text-center space-y-6 relative overflow-hidden shadow-2xl">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-bold uppercase tracking-widest text-indigo-400">🌙 4-7-8 Wind-Down Pacer</span>
+                <button 
+                  onClick={() => setIsWindDownActive(false)}
+                  className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold transition"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Expanding & Contracting Glowing Orb */}
+              <div className="relative py-8 flex items-center justify-center">
+                <div 
+                  className="w-44 h-44 rounded-full bg-gradient-to-tr from-indigo-500/40 via-purple-500/40 to-emerald-500/40 border border-indigo-300/40 flex items-center justify-center transition-all duration-1000 shadow-2xl"
+                  style={{
+                    transform: breathPhase === 'Inhale' ? 'scale(1.25)' : breathPhase === 'Hold' ? 'scale(1.25)' : 'scale(0.85)',
+                    boxShadow: breathPhase === 'Inhale' ? '0 0 50px rgba(99, 102, 241, 0.6)' : '0 0 20px rgba(99, 102, 241, 0.2)'
+                  }}
+                >
+                  <div className="text-center">
+                    <div className="text-2xl font-black text-white">{breathPhase}</div>
+                    <div className="text-4xl font-extrabold text-indigo-300 font-mono mt-1">{breathTimer}s</div>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-xs text-slate-300 leading-relaxed">
+                {breathPhase === 'Inhale' && 'Breathe in slowly through your nose for 4 seconds.'}
+                {breathPhase === 'Hold' && 'Hold your breath gently for 7 seconds to calm your heart rate.'}
+                {breathPhase === 'Exhale' && 'Exhale completely through your mouth for 8 seconds.'}
+              </p>
+
+              <button 
+                onClick={() => setIsWindDownActive(false)}
+                className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl transition"
+              >
+                Exit Wind-Down Mode
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Role Banner / Context */}
         {user?.role === 'Parent' && (
@@ -335,7 +432,7 @@ const Dashboard = () => {
                     return (
                       <div key={idx} className="flex flex-col items-center gap-1 h-full justify-end group relative">
                         {/* Tooltip on hover */}
-                        <div className="absolute -top-7 opacity-0 group-hover:opacity-100 bg-slate-800 text-slate-200 text-[10px] font-bold px-1.5 py-0.5 rounded shadow pointer-events-none transition">
+                        <div className="absolute -top-7 opacity-0 group-hover:opacity-100 bg-slate-800 text-slate-200 text-[10px] font-bold px-1.5 py-0.5 rounded shadow pointer-events-none transition z-10">
                           {w.screenTime}m
                         </div>
                         <div 
@@ -352,39 +449,32 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Top Distracting Apps */}
+          {/* Interactive Bedtime App Lock & Restrictions */}
           <div className="glass-panel p-6 rounded-2xl border-t border-l border-white/10 flex flex-col justify-between">
             <div>
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Top Late-Night Apps</h3>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Interactive App Locks</h3>
+                <span className="text-[10px] text-indigo-400">Curfew Defense</span>
+              </div>
               
-              <div className="space-y-4">
-                {(insights?.topApps || []).length > 0 ? (
-                  insights.topApps.map((app, idx) => (
-                    <div key={idx} className="space-y-1.5">
-                      <div className="flex justify-between text-xs font-medium">
-                        <span className="text-slate-200 flex items-center gap-1.5">
-                          <span className={`w-2 h-2 rounded-full ${app.category === 'Educational' ? 'bg-emerald-400' : 'bg-orange-400'}`}></span>
-                          {app.name}
-                        </span>
-                        <span className="text-indigo-300 font-bold">{app.duration} mins</span>
-                      </div>
-                      <div className="w-full bg-slate-900/60 rounded-full h-1.5 overflow-hidden border border-white/5">
-                        <div 
-                          className={`h-1.5 rounded-full ${app.category === 'Educational' ? 'bg-emerald-500' : 'bg-gradient-to-r from-orange-500 to-indigo-500'}`} 
-                          style={{ width: `${Math.min(100, Math.round((app.duration / ((insights.averageScreenTime || 1) * 1.5)) * 100))}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-xs text-slate-500 italic">No usage recorded yet.</p>
-                )}
+              <div className="space-y-3">
+                {Object.keys(appLocks).map((appName, idx) => (
+                  <div key={idx} className="flex justify-between items-center p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                    <span className="text-xs font-semibold text-slate-200">{appName}</span>
+                    <button
+                      onClick={() => toggleAppLock(appName)}
+                      className={`px-3 py-1 rounded-lg text-[10px] font-bold transition flex items-center gap-1 ${appLocks[appName] ? 'bg-red-500/20 text-red-300 border border-red-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'}`}
+                    >
+                      {appLocks[appName] ? '🔒 Locked' : '🔓 Allowed'}
+                    </button>
+                  </div>
+                ))}
               </div>
             </div>
 
             {/* Quick Testing Simulator */}
             <div className="mt-6 pt-4 border-t border-slate-800 space-y-2">
-              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Simulate Live Scenarios</div>
+              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Simulate Live Telemetry</div>
               <div className="grid grid-cols-3 gap-1.5">
                 <button
                   disabled={simulating}
