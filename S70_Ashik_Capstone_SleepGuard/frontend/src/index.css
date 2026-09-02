@@ -1,87 +1,128 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #3b82f6;
-  --color-secondary: #8b5cf6;
-  --color-background: #070d1e; /* Deep Dark Blue */
-  --color-surface: #0e172e;    /* Dark Blue Panel */
+  --color-primary: #6366f1;
+  --color-primary-hover: #4f46e5;
+  --color-background: #090d16;
+  --color-surface: #0f172a;
+  --color-surface-hover: #1e293b;
+  --color-border: #1e293b;
 }
 
 @layer base {
+  *, ::after, ::before {
+    box-sizing: border-box;
+  }
+
   body {
     margin: 0;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-      sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #070d1e;
-    color: #f8fafc;
+    background-color: #090d16;
+    color: #f1f5f9;
+    line-height: 1.5;
+  }
+
+  input, button, select, textarea {
+    font-family: inherit;
   }
 }
 
-/* Dark Blue Glassmorphism */
-.glass-panel {
-  background: rgba(14, 23, 46, 0.72);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(59, 130, 246, 0.15);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+/* Professional SaaS Card and Surface Styling */
+.saas-card {
+  background-color: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.glass-card-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.glass-card-hover:hover {
-  transform: translateY(-4px);
-  background: rgba(20, 32, 64, 0.85);
-  border-color: rgba(99, 102, 241, 0.4);
-  box-shadow: 0 12px 40px -10px rgba(37, 99, 235, 0.3);
+.saas-card:hover {
+  border-color: #334155;
 }
 
-/* Breathing Orb Animation for Wind-down mode */
-@keyframes breathe {
-  0% { transform: scale(0.85); opacity: 0.5; filter: blur(10px); }
-  50% { transform: scale(1.25); opacity: 0.95; filter: blur(2px); }
-  100% { transform: scale(0.85); opacity: 0.5; filter: blur(10px); }
+.saas-card-subtle {
+  background-color: #111a2e;
+  border: 1px solid #1e293b;
+  border-radius: 0.5rem;
 }
 
-.animate-breathe {
-  animation: breathe 8s infinite ease-in-out;
+/* Form Inputs */
+.saas-input {
+  background-color: #090d16;
+  border: 1px solid #334155;
+  color: #f8fafc;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
-  50% { box-shadow: 0 0 35px rgba(139, 92, 246, 0.6); }
+.saas-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
 }
 
-.animate-glow {
-  animation: pulse-glow 3s infinite ease-in-out;
+/* Buttons */
+.saas-btn-primary {
+  background-color: #4f46e5;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: background-color 0.15s ease, transform 0.05s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-/* Floating background gradients in deep midnight blue & celestial violet */
-.floating-blob {
-  animation: float 14s infinite ease-in-out alternate;
+.saas-btn-primary:hover {
+  background-color: #4338ca;
 }
 
-@keyframes float {
-  0% { transform: translate(0px, 0px) scale(1); }
-  50% { transform: translate(-25px, 20px) scale(1.05); }
-  100% { transform: translate(20px, -15px) scale(0.96); }
+.saas-btn-primary:active {
+  transform: translateY(1px);
 }
 
-/* Custom Scrollbar */
+.saas-btn-secondary {
+  background-color: #1e293b;
+  color: #e2e8f0;
+  font-weight: 500;
+  font-size: 0.875rem;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid #334155;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.saas-btn-secondary:hover {
+  background-color: #283548;
+  border-color: #475569;
+  color: #ffffff;
+}
+
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(7, 13, 30, 0.8);
+  background: #090d16;
 }
 ::-webkit-scrollbar-thumb {
   background: #1e293b;
-  border-radius: 9999px;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3b82f6;
+  background: #334155;
 }

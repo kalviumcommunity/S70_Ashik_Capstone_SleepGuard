@@ -4,18 +4,17 @@ import { AuthContext } from '../context/AuthContext';
 
 const Landing = () => {
   const { user } = useContext(AuthContext);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   // Interactive Device Simulator State
   const [selectedApps, setSelectedApps] = useState(['Instagram', 'TikTok']);
   const appDatabase = {
-    'Instagram': { category: 'Social Media', delay: 25, blueLight: 85, icon: '📸', risk: 'High' },
-    'TikTok': { category: 'Social Media', delay: 35, blueLight: 95, icon: '🎵', risk: 'Critical' },
+    'Instagram': { category: 'Social Media', delay: 25, blueLight: 85, icon: '📱', risk: 'High' },
+    'TikTok': { category: 'Social Media', delay: 35, blueLight: 95, icon: '🎬', risk: 'Critical' },
     'YouTube': { category: 'Entertainment', delay: 30, blueLight: 80, icon: '▶️', risk: 'High' },
     'Call of Duty': { category: 'Gaming', delay: 45, blueLight: 90, icon: '🎮', risk: 'Critical' },
     'Duolingo': { category: 'Educational', delay: 5, blueLight: 30, icon: '🦉', risk: 'Low' },
     'Notion': { category: 'Productivity', delay: 8, blueLight: 25, icon: '📝', risk: 'Low' },
-    'Reddit': { category: 'Social Media', delay: 20, blueLight: 70, icon: '🤖', risk: 'Moderate' },
+    'Reddit': { category: 'Social Media', delay: 20, blueLight: 70, icon: '💬', risk: 'Moderate' },
   };
 
   const toggleApp = (appName) => {
@@ -39,7 +38,7 @@ const Landing = () => {
 
     const cycles = [6, 5, 4]; // 9h (6 cycles), 7.5h (5 cycles), 6h (4 cycles)
     return cycles.map(cycleCount => {
-      const bedDate = new Date(wakeDate.getTime() - (cycleCount * 90 + 15) * 60000); // 90 min cycle + 15 min to fall asleep
+      const bedDate = new Date(wakeDate.getTime() - (cycleCount * 90 + 15) * 60000); // 90 min cycle + 15 min buffer
       return {
         cycles: cycleCount,
         hours: (cycleCount * 1.5).toFixed(1),
@@ -55,27 +54,27 @@ const Landing = () => {
   const [quizAnswers, setQuizAnswers] = useState({});
   const quizQuestions = [
     {
-      question: "When do you typically stop looking at your phone?",
+      question: "When do you typically stop looking at your mobile device?",
       options: [
-        { label: "1 hour before bed", points: 10 },
-        { label: "Right as I get under the covers", points: 40 },
+        { label: "1 hour before scheduled bedtime", points: 10 },
+        { label: "Right as I get into bed", points: 40 },
         { label: "1 to 2 hours after getting into bed", points: 80 }
       ]
     },
     {
-      question: "What is your main midnight trigger?",
+      question: "What is your primary late-night digital activity?",
       options: [
-        { label: "Infinite scrolling (Reels/TikTok)", type: "Doomscroller" },
-        { label: "Competitive Gaming or Chatting", type: "Night Owl Gamer" },
-        { label: "Late homework or study cramming", type: "Late Night Scholar" }
+        { label: "Infinite scrolling (Shorts, Reels, TikTok)", type: "Late-Night Scroller" },
+        { label: "Competitive mobile gaming & voice chat", type: "Night-Owl Gamer" },
+        { label: "Last-minute study sessions & homework", type: "Late-Night Scholar" }
       ]
     },
     {
-      question: "How do you feel when your alarm sounds?",
+      question: "How do you feel when your morning alarm sounds?",
       options: [
-        { label: "Refreshed & ready", score: "Great" },
-        { label: "Hitting snooze 3+ times", score: "Groggy" },
-        { label: "Exhausted with dry eyes", score: "Critical" }
+        { label: "Refreshed and alert", score: "Optimal" },
+        { label: "Groggy, needing 2+ snoozes", score: "Moderate Fatigue" },
+        { label: "Severely exhausted with eye strain", score: "High Sleep Debt" }
       ]
     }
   ];
@@ -83,7 +82,7 @@ const Landing = () => {
   // Interactive Audience Tabs
   const [activeTab, setActiveTab] = useState('students');
 
-  // Ambient Sound Generator (Web Audio API - Zero External Files)
+  // Ambient Sound Generator (Web Audio API)
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [activeSound, setActiveSound] = useState('rain');
   const audioContextRef = useRef(null);
@@ -110,27 +109,25 @@ const Landing = () => {
       }
 
       if (soundType === 'tone') {
-        // 432 Hz Binaural Rest Tone
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'sine';
         osc.frequency.setValueAtTime(432, ctx.currentTime);
-        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.setValueAtTime(0.06, ctx.currentTime);
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start();
         activeNodesRef.current = [osc];
       } else {
-        // Synthesized Gentle Rain/White noise
         const bufferSize = ctx.sampleRate * 2;
         const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
         const output = noiseBuffer.getChannelData(0);
         let lastOut = 0.0;
         for (let i = 0; i < bufferSize; i++) {
           const white = Math.random() * 2 - 1;
-          output[i] = (lastOut + (0.02 * white)) / 1.02; // Pink-ish filter
+          output[i] = (lastOut + (0.02 * white)) / 1.02;
           lastOut = output[i];
-          output[i] *= 3.5;
+          output[i] *= 2.5;
         }
 
         const whiteNoise = ctx.createBufferSource();
@@ -142,7 +139,7 @@ const Landing = () => {
         filter.frequency.setValueAtTime(soundType === 'ocean' ? 350 : 800, ctx.currentTime);
 
         const gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.12, ctx.currentTime);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
 
         whiteNoise.connect(filter);
         filter.connect(gain);
@@ -155,123 +152,112 @@ const Landing = () => {
       setActiveSound(soundType);
       setIsPlayingAudio(true);
     } catch (e) {
-      console.error("Audio error", e);
+      console.error("Audio initialization error", e);
     }
   };
 
-  // Parallax mouse effect
   useEffect(() => {
-    const handleMouseMove = (e) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 30;
-      const y = (e.clientY / window.innerHeight - 0.5) * 30;
-      setMousePos({ x, y });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
       stopAudio();
     };
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#070d1e] text-slate-100 font-sans overflow-x-hidden selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-[#090d16] text-slate-100 font-sans selection:bg-indigo-600/30">
       
-      {/* Background Animated Atmosphere in Deep Midnight Blue */}
-      <div 
-        className="fixed inset-0 pointer-events-none z-0 transition-transform duration-700 ease-out"
-        style={{ transform: `translate(${mousePos.x}px, ${mousePos.y}px)` }}
-      >
-        <div className="absolute top-[-15%] left-[-10%] w-[55vw] h-[55vw] bg-blue-600/15 rounded-full blur-[140px] floating-blob"></div>
-        <div className="absolute top-[40%] right-[-15%] w-[50vw] h-[50vw] bg-indigo-600/15 rounded-full blur-[140px] floating-blob" style={{ animationDelay: '3s' }}></div>
-        <div className="absolute bottom-[-10%] left-[25%] w-[45vw] h-[45vw] bg-cyan-600/10 rounded-full blur-[140px] floating-blob" style={{ animationDelay: '6s' }}></div>
-      </div>
-
-      {/* Navigation */}
-      <header className="relative z-20 border-b border-blue-900/40 backdrop-blur-xl bg-[#070d1e]/85 sticky top-0">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex justify-between items-center">
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+      {/* Top Navigation */}
+      <nav className="sticky top-0 z-30 bg-[#090d16]/90 backdrop-blur-md border-b border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-8">
+            <Link to="/" className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold shadow-sm">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-slate-100 text-base tracking-tight">SleepGuard</span>
+                <span className="text-[11px] font-medium text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700">SaaS v2.4</span>
+              </div>
+            </Link>
+            
+            <div className="hidden md:flex items-center gap-6 text-sm text-slate-400 font-medium">
+              <a href="#simulator" className="hover:text-slate-200 transition-colors">Screen Simulator</a>
+              <a href="#calculator" className="hover:text-slate-200 transition-colors">REM Calculator</a>
+              <a href="#quiz" className="hover:text-slate-200 transition-colors">Habit Diagnostic</a>
+              <a href="#features" className="hover:text-slate-200 transition-colors">Platform Features</a>
             </div>
-            <div>
-              <span className="text-xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-300 to-fuchsia-400">SleepGuard</span>
-              <span className="text-[10px] ml-2 text-indigo-400 font-mono font-bold uppercase tracking-wider bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20">v2.4 Active</span>
-            </div>
-          </Link>
+          </div>
 
-          <div className="flex items-center gap-4">
-            <a href="#simulator" className="text-xs font-semibold text-slate-400 hover:text-white transition hidden md:block">Interactive Lab</a>
-            <a href="#calculator" className="text-xs font-semibold text-slate-400 hover:text-white transition hidden md:block">REM Cycles</a>
-            <a href="#quiz" className="text-xs font-semibold text-slate-400 hover:text-white transition hidden md:block">Habit Quiz</a>
+          <div className="flex items-center gap-3">
             {user ? (
-              <Link to="/dashboard" className="px-4 py-2 text-xs font-bold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl shadow-lg shadow-indigo-500/25 transition">
-                Open Dashboard →
+              <Link to="/dashboard" className="saas-btn-primary">
+                Open Console
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
               </Link>
             ) : (
               <>
-                <Link to="/login" className="text-xs font-bold text-slate-300 hover:text-white transition px-3 py-2">Sign In</Link>
-                <Link to="/register" className="px-4 py-2 text-xs font-bold bg-gradient-to-r from-white via-slate-100 to-slate-200 text-slate-950 rounded-xl hover:opacity-90 transition shadow-lg shadow-white/10">
-                  Get Started Free
+                <Link to="/login" className="text-sm font-medium text-slate-300 hover:text-white px-3 py-2 rounded-md hover:bg-slate-800 transition-colors">
+                  Sign In
+                </Link>
+                <Link to="/register" className="saas-btn-primary">
+                  Get Started
                 </Link>
               </>
             )}
           </div>
         </div>
-      </header>
+      </nav>
 
       {/* Hero Section */}
-      <section className="relative z-10 pt-16 pb-20 px-4 max-w-7xl mx-auto text-center">
-        <div className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 backdrop-blur-md">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-          <span className="text-xs font-bold tracking-wider uppercase text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-indigo-300 to-pink-400">Interactive Sleep & Usage Intelligence</span>
+      <section className="pt-20 pb-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-slate-800 bg-slate-900/90 text-xs font-medium text-slate-300 mb-8">
+          <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>Intelligent Sleep Hygiene & Parental Telemetry Platform</span>
         </div>
 
-        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight max-w-5xl mx-auto leading-[1.1] mb-6">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-100 via-slate-200 to-slate-400">Reclaim Your Sleep From</span> <br className="hidden sm:inline" />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-fuchsia-400 to-amber-300 animate-pulse">
-            Late-Night Screen Drag.
-          </span>
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-100 tracking-tight leading-[1.15] mb-6">
+          Reclaim restorative sleep from <br />
+          <span className="text-indigo-400">late-night digital drag.</span>
         </h1>
 
         <p className="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed mb-10">
-          SleepGuard monitors midnight phone activity, detects non-educational doomscrolling, alerts parents, and uses AI to rebuild deep REM sleep cycles for students.
+          SleepGuard monitors midnight device usage, distinguishes study apps from recreational doomscrolling, alerts parents on curfew violations, and optimizes 90-minute REM sleep cycles.
         </p>
 
-        <div className="flex flex-wrap items-center justify-center gap-4 mb-16">
-          <Link to="/register" className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-2xl shadow-xl shadow-indigo-500/25 hover:scale-105 active:scale-95 transition-all text-sm flex items-center gap-2">
-            <span>🛡️ Protect My Sleep</span>
+        <div className="flex flex-wrap items-center justify-center gap-3.5 mb-14">
+          <Link to="/register" className="saas-btn-primary px-6 py-2.5 text-sm">
+            Start Free Protection
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
           </Link>
-          <Link to="/login" className="px-7 py-4 bg-slate-900/80 hover:bg-slate-800 text-slate-200 border border-slate-800 font-bold rounded-2xl hover:scale-105 active:scale-95 transition text-sm">
-            ⚡ 1-Click Demo Mode
+          <Link to="/login" className="saas-btn-secondary px-6 py-2.5 text-sm">
+            Explore 1-Click Demo
           </Link>
         </div>
 
-        {/* Ambient Bedtime Sound Studio Floating Bar */}
-        <div className="max-w-xl mx-auto glass-panel p-3.5 rounded-2xl flex items-center justify-between gap-3 border border-indigo-500/20 shadow-2xl">
-          <div className="flex items-center gap-2.5 text-left pl-2">
-            <span className="text-xl">🌙</span>
+        {/* Ambient Bedtime Synthesizer Bar */}
+        <div className="saas-card max-w-xl mx-auto p-3 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 text-left pl-2">
+            <span className="text-base">🌙</span>
             <div>
-              <div className="text-xs font-bold text-slate-200">Wind-Down Sound Generator</div>
-              <div className="text-[10px] text-slate-400">Live synthetic audio for bedtime relaxation</div>
+              <div className="text-xs font-semibold text-slate-200">Bedtime Wind-Down Audio</div>
+              <div className="text-[11px] text-slate-400">In-browser binaural and filtered relaxation tones</div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <button
               onClick={() => isPlayingAudio && activeSound === 'rain' ? stopAudio() : playSound('rain')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${isPlayingAudio && activeSound === 'rain' ? 'bg-indigo-600 text-white animate-pulse' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${isPlayingAudio && activeSound === 'rain' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
             >
               🌧️ Rain
             </button>
             <button
               onClick={() => isPlayingAudio && activeSound === 'ocean' ? stopAudio() : playSound('ocean')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${isPlayingAudio && activeSound === 'ocean' ? 'bg-indigo-600 text-white animate-pulse' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${isPlayingAudio && activeSound === 'ocean' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
             >
               🌊 Waves
             </button>
             <button
               onClick={() => isPlayingAudio && activeSound === 'tone' ? stopAudio() : playSound('tone')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${isPlayingAudio && activeSound === 'tone' ? 'bg-indigo-600 text-white animate-pulse' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${isPlayingAudio && activeSound === 'tone' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
             >
               ✨ 432Hz
             </button>
@@ -279,115 +265,125 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* 📱 Interactive Lab Section: Live App Disruption Simulator */}
-      <section id="simulator" className="relative z-10 py-20 px-4 max-w-7xl mx-auto border-t border-slate-900">
-        <div className="text-center mb-12">
-          <div className="text-xs font-mono font-bold uppercase tracking-widest text-indigo-400 mb-2">Interactive Lab 01</div>
-          <h2 className="text-3xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400">
-            Interactive Late-Night Screen Simulator
+      {/* Key Metric Highlights */}
+      <section className="py-8 border-y border-slate-800 bg-[#0c1220]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          <div>
+            <div className="text-2xl font-bold text-slate-100">85%</div>
+            <div className="text-xs font-medium text-slate-400 mt-0.5">Average Goal Adherence</div>
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-slate-100">&lt; 15 min</div>
+            <div className="text-xs font-medium text-slate-400 mt-0.5">Sleep Onset Latency</div>
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-slate-100">Real-Time</div>
+            <div className="text-xs font-medium text-slate-400 mt-0.5">Parental Curfew Telemetry</div>
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-slate-100">2FA OTP</div>
+            <div className="text-xs font-medium text-slate-400 mt-0.5">Enterprise Account Security</div>
+          </div>
+        </div>
+      </section>
+
+      {/* 📱 Interactive Lab 01: Late-Night Screen Impact Simulator */}
+      <section id="simulator" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">Interactive Telemetry Tool</span>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 mt-1">
+            Late-Night Screen Disruption Simulator
           </h2>
-          <p className="text-slate-400 text-sm max-w-2xl mx-auto mt-3">
-            Click on active apps to simulate late-night phone usage and inspect real-time blue light impact, REM delay, and parental trigger states.
+          <p className="text-slate-400 text-sm mt-2">
+            Select mobile applications to simulate late-night screen time and inspect real-time melatonin delay, blue light burden, and automated parent alerting.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start max-w-5xl mx-auto">
           
-          {/* Virtual Phone Mockup */}
-          <div className="lg:col-span-6 flex justify-center">
-            <div className="w-[300px] h-[520px] bg-slate-900 rounded-[40px] p-4 border-4 border-slate-700 shadow-2xl relative flex flex-col justify-between overflow-hidden">
-              {/* Phone Camera Notch */}
-              <div className="absolute top-3 left-1/2 -translate-x-1/2 w-28 h-4 bg-slate-950 rounded-full flex items-center justify-end pr-2">
-                <div className="w-2 h-2 rounded-full bg-slate-800"></div>
+          {/* App Selector Panel */}
+          <div className="lg:col-span-6 saas-card p-6">
+            <div className="flex justify-between items-center pb-4 mb-4 border-b border-slate-800">
+              <div>
+                <h3 className="text-sm font-semibold text-slate-200">Active Mobile Apps</h3>
+                <p className="text-xs text-slate-400">Toggle apps to simulate midnight usage</p>
               </div>
+              <span className="text-xs font-mono font-medium text-slate-400 bg-slate-900 px-2.5 py-1 rounded border border-slate-800">
+                00:45 AM Telemetry
+              </span>
+            </div>
 
-              {/* Status Header */}
-              <div className="pt-5 pb-3 flex justify-between items-center text-[10px] text-slate-400 font-mono">
-                <span>00:45 AM</span>
-                <span>🔋 42%</span>
-              </div>
-
-              {/* App Grid inside Phone */}
-              <div className="space-y-3 flex-1 overflow-y-auto pt-2">
-                <div className="text-[11px] font-bold text-slate-300 uppercase tracking-wider text-center mb-3">
-                  Tap to Toggle Night Activity
-                </div>
-                <div className="grid grid-cols-2 gap-2.5">
-                  {Object.keys(appDatabase).map(app => {
-                    const isSelected = selectedApps.includes(app);
-                    const info = appDatabase[app];
-                    return (
-                      <button
-                        key={app}
-                        onClick={() => toggleApp(app)}
-                        className={`p-2.5 rounded-2xl flex items-center gap-2 text-left transition-all duration-300 ${isSelected ? 'bg-indigo-600/30 border-2 border-indigo-400 shadow-lg shadow-indigo-500/20' : 'bg-slate-800/60 border border-slate-700/60 hover:bg-slate-800'}`}
-                      >
-                        <span className="text-xl">{info.icon}</span>
-                        <div className="truncate">
-                          <div className="text-xs font-bold text-white truncate">{app}</div>
-                          <div className={`text-[9px] font-semibold ${info.category === 'Educational' ? 'text-emerald-400' : 'text-orange-400'}`}>
-                            {info.category}
-                          </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              {Object.keys(appDatabase).map(app => {
+                const isSelected = selectedApps.includes(app);
+                const info = appDatabase[app];
+                return (
+                  <button
+                    key={app}
+                    onClick={() => toggleApp(app)}
+                    className={`p-3 rounded-lg flex items-center justify-between text-left transition-all border text-xs ${isSelected ? 'bg-indigo-950/40 border-indigo-500/60 text-slate-100 shadow-sm' : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:border-slate-700'}`}
+                  >
+                    <div className="flex items-center gap-2 truncate">
+                      <span className="text-base">{info.icon}</span>
+                      <div className="truncate">
+                        <div className="font-semibold truncate">{app}</div>
+                        <div className={`text-[10px] ${info.category === 'Educational' ? 'text-emerald-400' : 'text-slate-400'}`}>
+                          {info.category}
                         </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Virtual Home Bar */}
-              <div className="pt-2 flex justify-center">
-                <div className="w-24 h-1 bg-slate-600 rounded-full"></div>
-              </div>
+                      </div>
+                    </div>
+                    <span className={`w-2 h-2 rounded-full ${isSelected ? 'bg-indigo-400' : 'bg-slate-700'}`}></span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* Live Impact Analytics Output */}
-          <div className="lg:col-span-6 space-y-5">
-            <div className="glass-panel p-6 rounded-3xl border border-white/10 space-y-6">
-              <div className="flex justify-between items-center">
-                <h3 className="text-base font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-300">Live Disruption Metrics</h3>
-                <span className={`text-xs font-bold px-3 py-1 rounded-full ${hasNonEdu ? 'bg-red-500/20 text-red-300 border border-red-500/30 animate-pulse' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'}`}>
-                  {hasNonEdu ? '🚨 Parent Alert Triggered' : '✅ Compliant (Study Mode)'}
+          {/* Real-Time Analytics Output */}
+          <div className="lg:col-span-6 space-y-4">
+            <div className="saas-card p-6 space-y-6">
+              <div className="flex justify-between items-center pb-3 border-b border-slate-800">
+                <h3 className="text-sm font-semibold text-slate-200">Live Disruption Telemetry</h3>
+                <span className={`text-xs font-semibold px-2.5 py-0.5 rounded border ${hasNonEdu ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
+                  {hasNonEdu ? '⚠️ Parent Notification Active' : '✅ Compliant (Study Mode)'}
                 </span>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
-                  <div className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Sleep Onset Delay</div>
-                  <div className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-400">+{totalDelay} <span className="text-sm font-normal text-slate-400">mins</span></div>
-                  <div className="text-[10px] text-slate-500 mt-1">Delay to natural melatonin peak</div>
+                <div className="saas-card-subtle p-4">
+                  <div className="text-xs text-slate-400 font-medium">Estimated Sleep Delay</div>
+                  <div className="text-2xl font-bold text-indigo-400 mt-1">+{totalDelay} <span className="text-xs text-slate-400 font-normal">mins</span></div>
+                  <div className="text-[11px] text-slate-500 mt-1">Melatonin suppression onset</div>
                 </div>
 
-                <div className="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
-                  <div className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Blue Light Load</div>
-                  <div className={`text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r ${avgBlueLight > 60 ? 'from-amber-400 to-rose-400' : 'from-teal-300 to-emerald-400'}`}>{avgBlueLight}%</div>
-                  <div className="text-[10px] text-slate-500 mt-1">Circadian rhythm suppression</div>
+                <div className="saas-card-subtle p-4">
+                  <div className="text-xs text-slate-400 font-medium">Blue Light Load</div>
+                  <div className={`text-2xl font-bold mt-1 ${avgBlueLight > 60 ? 'text-amber-400' : 'text-emerald-400'}`}>{avgBlueLight}%</div>
+                  <div className="text-[11px] text-slate-500 mt-1">Circadian phase delay</div>
                 </div>
               </div>
 
-              {/* Disruption Progress Bar */}
               <div>
-                <div className="flex justify-between text-xs font-bold mb-2">
-                  <span className="text-slate-300">Sleep Health Penalty</span>
-                  <span className={totalDelay > 40 ? 'text-red-400 font-black' : 'text-emerald-400 font-black'}>
-                    {Math.min(100, Math.round(totalDelay * 1.2))}% Disrupted
+                <div className="flex justify-between text-xs font-medium mb-1.5">
+                  <span className="text-slate-300">Sleep Quality Impact</span>
+                  <span className={totalDelay > 40 ? 'text-rose-400 font-semibold' : 'text-emerald-400 font-semibold'}>
+                    {Math.min(100, Math.round(totalDelay * 1.2))}% Impaired
                   </span>
                 </div>
-                <div className="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
                   <div 
-                    className={`h-full transition-all duration-500 ${totalDelay > 40 ? 'bg-gradient-to-r from-orange-500 to-red-500' : 'bg-gradient-to-r from-indigo-500 to-emerald-400'}`}
-                    style={{ width: `${Math.min(100, Math.max(10, totalDelay * 1.2))}%` }}
+                    className={`h-full transition-all duration-300 ${totalDelay > 40 ? 'bg-rose-500' : 'bg-indigo-500'}`}
+                    style={{ width: `${Math.min(100, Math.max(8, totalDelay * 1.2))}%` }}
                   ></div>
                 </div>
               </div>
 
-              <div className="bg-slate-900/50 p-3.5 rounded-xl border border-white/5 text-xs text-slate-300 flex items-start gap-2.5">
-                <span className="text-base">💡</span>
-                <p className="leading-snug">
+              <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800 text-xs text-slate-300 flex items-start gap-2.5">
+                <span className="text-indigo-400 font-bold">ℹ️</span>
+                <p className="leading-relaxed">
                   {hasNonEdu 
-                    ? `SleepGuard's late-night daemon flags non-educational apps past bedtime and automatically delivers a notification to the parent's device.`
-                    : `Educational apps like Duolingo & Notion do not trigger high-priority parent alerts, fostering student study independence.`}
+                    ? `SleepGuard's late-night monitoring daemon flags recreational apps past the configured bedtime limit and sends instant parent alerts.`
+                    : `Study apps like Duolingo & Notion are whitelisted to protect student study autonomy without generating false-positive bedtime alarms.`}
                 </p>
               </div>
             </div>
@@ -396,29 +392,29 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* ⏰ Interactive Section 02: REM Sleep Cycle Bedtime Calculator */}
-      <section id="calculator" className="relative z-10 py-20 px-4 max-w-7xl mx-auto border-t border-slate-900">
-        <div className="text-center mb-12">
-          <div className="text-xs font-mono font-bold uppercase tracking-widest text-purple-400 mb-2">Interactive Lab 02</div>
-          <h2 className="text-3xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-amber-300">
-            90-Minute REM Cycle Bedtime Calculator
+      {/* ⏰ Interactive Lab 02: 90-Minute REM Cycle Optimizer */}
+      <section id="calculator" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800">
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">Sleep Science Utility</span>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 mt-1">
+            90-Minute REM Sleep Cycle Calculator
           </h2>
-          <p className="text-slate-400 text-sm max-w-2xl mx-auto mt-3">
-            Human sleep follows 90-minute ultradian cycles. Waking up in the middle of a deep sleep cycle causes morning grogginess. Choose your wake-up goal:
+          <p className="text-slate-400 text-sm mt-2">
+            Human sleep operates in 90-minute ultradian cycles. Waking up midway through deep non-REM stages causes sleep inertia. Select your wake-up goal:
           </p>
         </div>
 
-        <div className="max-w-3xl mx-auto glass-panel p-8 rounded-3xl border border-white/10 space-y-8">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+        <div className="max-w-3xl mx-auto saas-card p-6 sm:p-8 space-y-6">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-slate-900 rounded-lg border border-slate-800">
             <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">Set Desired Wake Up Time</label>
-              <span className="text-xs text-slate-500">When does your morning alarm ring?</span>
+              <label className="text-xs font-semibold uppercase tracking-wider text-slate-300 block mb-0.5">Target Wake-Up Time</label>
+              <span className="text-xs text-slate-500">When does your morning alarm sound?</span>
             </div>
             <input 
               type="time" 
               value={wakeTime}
               onChange={(e) => setWakeTime(e.target.value)}
-              className="px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-lg font-bold text-indigo-300 focus:outline-none focus:border-indigo-500 transition"
+              className="saas-input text-base font-bold text-indigo-300 px-3 py-2"
             />
           </div>
 
@@ -426,45 +422,45 @@ const Landing = () => {
             {calculatedBedtimes.map((item, idx) => (
               <div 
                 key={idx} 
-                className={`p-5 rounded-2xl border text-center transition-all ${item.recommended ? 'bg-indigo-600/20 border-indigo-500/50 shadow-xl shadow-indigo-500/10 scale-105' : 'bg-slate-900/60 border-slate-800 hover:border-slate-700'}`}
+                className={`p-4 rounded-lg border text-center transition-all ${item.recommended ? 'bg-indigo-950/30 border-indigo-500/50 shadow-sm' : 'bg-slate-900/60 border-slate-800'}`}
               >
                 {item.recommended && (
-                  <span className="text-[9px] font-bold uppercase tracking-widest bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-2 py-0.5 rounded-full inline-block mb-2">
-                    Optimal Goal
+                  <span className="text-[10px] font-bold uppercase tracking-wider bg-indigo-600 text-white px-2 py-0.5 rounded inline-block mb-2">
+                    Recommended
                   </span>
                 )}
-                <div className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-indigo-200 to-fuchsia-300">{item.time}</div>
-                <div className="text-xs text-indigo-300 font-semibold mt-1">{item.hours} hours ({item.cycles} cycles)</div>
-                <div className="text-[10px] text-slate-400 mt-2">Natural wakeup without alarm shock</div>
+                <div className="text-2xl font-bold text-slate-100">{item.time}</div>
+                <div className="text-xs text-indigo-400 font-medium mt-1">{item.hours} hrs ({item.cycles} complete cycles)</div>
+                <div className="text-[11px] text-slate-500 mt-1.5">Includes 15-min sleep onset buffer</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* 🧠 Interactive Section 03: What's Keeping You Awake? Quiz */}
-      <section id="quiz" className="relative z-10 py-20 px-4 max-w-7xl mx-auto border-t border-slate-900">
-        <div className="text-center mb-12">
-          <div className="text-xs font-mono font-bold uppercase tracking-widest text-emerald-400 mb-2">Interactive Lab 03</div>
-          <h2 className="text-3xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">
-            What's Keeping You Awake?
+      {/* 🧠 Interactive Lab 03: 30-Second Sleep Habit Diagnostic */}
+      <section id="quiz" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800">
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">Interactive Assessment</span>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 mt-1">
+            Sleep Quality & Screen Diagnostic
           </h2>
-          <p className="text-slate-400 text-sm max-w-2xl mx-auto mt-3">
-            Answer 3 quick questions to discover your sleep archetype and get an instant AI action plan.
+          <p className="text-slate-400 text-sm mt-2">
+            Complete a 30-second assessment to diagnose late-night digital bottlenecks and receive personalized sleep hygiene recommendations.
           </p>
         </div>
 
-        <div className="max-w-2xl mx-auto glass-panel p-8 rounded-3xl border border-white/10">
+        <div className="max-w-2xl mx-auto saas-card p-6 sm:p-8">
           {quizStep < quizQuestions.length ? (
-            <div className="space-y-6">
-              <div className="flex justify-between items-center text-xs font-bold text-slate-400">
+            <div className="space-y-5">
+              <div className="flex justify-between items-center text-xs font-semibold text-slate-400 pb-3 border-b border-slate-800">
                 <span>Step {quizStep + 1} of {quizQuestions.length}</span>
-                <span className="text-indigo-400">{Math.round(((quizStep + 1) / quizQuestions.length) * 100)}%</span>
+                <span className="text-indigo-400">{Math.round(((quizStep + 1) / quizQuestions.length) * 100)}% Complete</span>
               </div>
 
-              <h3 className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-indigo-200">{quizQuestions[quizStep].question}</h3>
+              <h3 className="text-base font-semibold text-slate-100">{quizQuestions[quizStep].question}</h3>
 
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {quizQuestions[quizStep].options.map((opt, idx) => (
                   <button
                     key={idx}
@@ -472,29 +468,31 @@ const Landing = () => {
                       setQuizAnswers({ ...quizAnswers, [quizStep]: opt });
                       setQuizStep(quizStep + 1);
                     }}
-                    className="w-full text-left p-4 rounded-2xl bg-slate-900/70 hover:bg-indigo-600/20 border border-slate-800 hover:border-indigo-500 text-sm font-semibold text-slate-200 hover:text-white transition flex justify-between items-center group"
+                    className="w-full text-left p-3.5 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-xs font-medium text-slate-200 transition flex justify-between items-center group"
                   >
                     <span>{opt.label}</span>
-                    <span className="text-indigo-400 group-hover:translate-x-1 transition-transform">→</span>
+                    <span className="text-indigo-400 group-hover:translate-x-0.5 transition-transform">→</span>
                   </button>
                 ))}
               </div>
             </div>
           ) : (
-            <div className="text-center space-y-6">
-              <div className="w-16 h-16 bg-gradient-to-tr from-emerald-500 to-indigo-600 rounded-2xl mx-auto flex items-center justify-center text-2xl shadow-xl shadow-indigo-500/20">
-                ✨
+            <div className="text-center space-y-5">
+              <div className="w-12 h-12 bg-indigo-600/20 text-indigo-400 rounded-lg mx-auto flex items-center justify-center text-xl border border-indigo-500/30">
+                📊
               </div>
-              <h3 className="text-2xl font-black text-white">Your Sleep Archetype: <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-indigo-300 to-pink-400">{quizAnswers[1]?.type || 'Midnight Doomscroller'}</span></h3>
-              <p className="text-slate-300 text-sm leading-relaxed max-w-md mx-auto">
-                Late-night mobile stimulation is delaying your core sleep stages. SleepGuard's AI automatically buffers usage limits to protect your natural morning alertness.
-              </p>
+              <div>
+                <h3 className="text-lg font-bold text-slate-100">Diagnosis: <span className="text-indigo-400">{quizAnswers[1]?.type || 'Late-Night Digital Scroller'}</span></h3>
+                <p className="text-slate-400 text-xs leading-relaxed max-w-md mx-auto mt-2">
+                  Evening stimulation is suppressing your melatonin cycle and pushing REM sleep into early morning hours. SleepGuard can enforce automated curfews and bedtime wind-down reminders.
+                </p>
+              </div>
               <div className="flex justify-center gap-3 pt-2">
-                <Link to="/register" className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl text-xs shadow-lg shadow-indigo-500/25">
-                  Start Personalized Defense →
+                <Link to="/register" className="saas-btn-primary text-xs">
+                  Set Up Sleep Defense
                 </Link>
-                <button onClick={() => { setQuizStep(0); setQuizAnswers({}); }} className="px-5 py-3 bg-slate-800 text-slate-300 rounded-xl text-xs font-bold hover:bg-slate-700">
-                  Retake Quiz
+                <button onClick={() => { setQuizStep(0); setQuizAnswers({}); }} className="saas-btn-secondary text-xs">
+                  Retake Diagnostic
                 </button>
               </div>
             </div>
@@ -503,110 +501,81 @@ const Landing = () => {
       </section>
 
       {/* 🎯 Audience Perspectives (Tabs) */}
-      <section className="relative z-10 py-20 px-4 max-w-7xl mx-auto border-t border-slate-900">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-rose-400 to-indigo-400">
-            Built for Students, Trusted by Parents
-          </h2>
-          <p className="text-slate-400 text-sm max-w-xl mx-auto mt-3">Explore tailored workflows built for each user perspective.</p>
+      <section id="features" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800">
+        <div className="text-center max-w-2xl mx-auto mb-8">
+          <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">Tailored Experience</span>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 mt-1">Built for Students, Trusted by Parents</h2>
         </div>
 
-        {/* Tab Controls */}
-        <div className="flex justify-center mb-10">
-          <div className="bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800 flex gap-2">
+        <div className="flex justify-center mb-8">
+          <div className="bg-slate-900 p-1 rounded-lg border border-slate-800 inline-flex gap-1">
             <button
               onClick={() => setActiveTab('students')}
-              className={`px-5 py-2.5 rounded-xl text-xs font-bold transition ${activeTab === 'students' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25' : 'text-slate-400 hover:text-white'}`}
+              className={`px-4 py-2 rounded-md text-xs font-semibold transition-colors ${activeTab === 'students' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-slate-200'}`}
             >
-              🎓 For Students
+              🎓 For Students & Teens
             </button>
             <button
               onClick={() => setActiveTab('parents')}
-              className={`px-5 py-2.5 rounded-xl text-xs font-bold transition ${activeTab === 'parents' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25' : 'text-slate-400 hover:text-white'}`}
+              className={`px-4 py-2 rounded-md text-xs font-semibold transition-colors ${activeTab === 'parents' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-slate-200'}`}
             >
-              🛡️ For Parents
-            </button>
-            <button
-              onClick={() => setActiveTab('security')}
-              className={`px-5 py-2.5 rounded-xl text-xs font-bold transition ${activeTab === 'security' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25' : 'text-slate-400 hover:text-white'}`}
-            >
-              🔒 2FA & Privacy
+              🛡️ For Parents & Guardians
             </button>
           </div>
         </div>
 
-        {/* Tab Content */}
         <div className="max-w-4xl mx-auto">
-          {activeTab === 'students' && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-3">
-                <div className="text-2xl">📈</div>
-                <h4 className="text-base font-bold text-white">Sleep Score Tracking</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">Know how late-night apps affect your waking energy before tests and lectures.</p>
+          {activeTab === 'students' ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="saas-card p-5">
+                <div className="text-indigo-400 font-bold text-lg mb-2">01</div>
+                <h4 className="text-sm font-semibold text-slate-200">Study Autonomy</h4>
+                <p className="text-xs text-slate-400 mt-1 leading-relaxed">Whitelists homework and educational apps during late hours without sending parental alerts.</p>
               </div>
-              <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-3">
-                <div className="text-2xl">🤖</div>
-                <h4 className="text-base font-bold text-white">Contextual AI Advice</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">Personalized recommendations comparing your bedtime schedule against app categories.</p>
+              <div className="saas-card p-5">
+                <div className="text-indigo-400 font-bold text-lg mb-2">02</div>
+                <h4 className="text-sm font-semibold text-slate-200">Wind-Down Pacing</h4>
+                <p className="text-xs text-slate-400 mt-1 leading-relaxed">Built-in 4-7-8 breathing pacers and synthesized delta tones to decompress before sleep.</p>
               </div>
-              <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-3">
-                <div className="text-2xl">📚</div>
-                <h4 className="text-base font-bold text-white">Study Whitelist</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">Educational apps like Quizlet & Duolingo are whitelisted from triggering parent alerts.</p>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'parents' && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-3">
-                <div className="text-2xl">⚠️</div>
-                <h4 className="text-base font-bold text-white">Late-Night Alerts</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">Receive automated alerts when children engage in gaming or social media after midnight.</p>
-              </div>
-              <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-3">
-                <div className="text-2xl">⏰</div>
-                <h4 className="text-base font-bold text-white">Curfew Scheduling</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">Set custom bedtime and wake-up goals with allowable screen-time limits.</p>
-              </div>
-              <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-3">
-                <div className="text-2xl">📊</div>
-                <h4 className="text-base font-bold text-white">Weekly Summary</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">Visual 7-day reports displaying sleep adherence and top late-night time drains.</p>
+              <div className="saas-card p-5">
+                <div className="text-indigo-400 font-bold text-lg mb-2">03</div>
+                <h4 className="text-sm font-semibold text-slate-200">REM Wakeup Schedule</h4>
+                <p className="text-xs text-slate-400 mt-1 leading-relaxed">Smart bedtime suggestions to wake up at the conclusion of natural 90-minute sleep cycles.</p>
               </div>
             </div>
-          )}
-
-          {activeTab === 'security' && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-3">
-                <div className="text-2xl">🔐</div>
-                <h4 className="text-base font-bold text-white">2-Factor OTP</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">Zero unauthorized logins with encrypted 6-digit email OTP verification.</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="saas-card p-5">
+                <div className="text-indigo-400 font-bold text-lg mb-2">01</div>
+                <h4 className="text-sm font-semibold text-slate-200">Midnight Alerts</h4>
+                <p className="text-xs text-slate-400 mt-1 leading-relaxed">Instant notifications when games or social media feeds run past designated bedtime curfews.</p>
               </div>
-              <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-3">
-                <div className="text-2xl">🛡️</div>
-                <h4 className="text-base font-bold text-white">RBAC Security</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">Strict role isolation ensuring student and parent dashboards remain secure and segmented.</p>
+              <div className="saas-card p-5">
+                <div className="text-indigo-400 font-bold text-lg mb-2">02</div>
+                <h4 className="text-sm font-semibold text-slate-200">7-Day Trends</h4>
+                <p className="text-xs text-slate-400 mt-1 leading-relaxed">Executive weekly health scores and screen-time adherence graphs for informed parenting.</p>
               </div>
-              <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-3">
-                <div className="text-2xl">🔒</div>
-                <h4 className="text-base font-bold text-white">JWT Encryption</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">Cryptographic authorization tokens protecting all sleep and telemetry routes.</p>
+              <div className="saas-card p-5">
+                <div className="text-indigo-400 font-bold text-lg mb-2">03</div>
+                <h4 className="text-sm font-semibold text-slate-200">Remote Curfew Controls</h4>
+                <p className="text-xs text-slate-400 mt-1 leading-relaxed">Easily adjust bedtime limits, wake times, and app locks directly from the parent portal.</p>
               </div>
             </div>
           )}
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-slate-900 py-10 text-center text-slate-500 text-xs">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div>© 2026 SleepGuard. Mobile Usage Monitoring for Student Sleep Cycles.</div>
-          <div className="flex gap-4">
+      {/* Clean SaaS Footer */}
+      <footer className="border-t border-slate-800 bg-[#060a12] py-8 text-xs text-slate-500">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-slate-300">SleepGuard</span>
+            <span>• Capstone Sleep Hygiene & Screen Time Security</span>
+          </div>
+          <div className="flex items-center gap-6">
             <Link to="/login" className="hover:text-slate-300">Sign In</Link>
             <Link to="/register" className="hover:text-slate-300">Register</Link>
-            <Link to="/dashboard" className="hover:text-slate-300">Dashboard</Link>
+            <span>2FA OTP Protected</span>
           </div>
         </div>
       </footer>
