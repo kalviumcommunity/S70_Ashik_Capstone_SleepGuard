@@ -197,7 +197,7 @@ const Dashboard = () => {
   const maxWeeklyMins = Math.max(...(insights?.weeklyTrend?.map(w => w.screenTime) || [60]), 60);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-8 font-sans selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-[#18191c] text-neutral-100 p-4 md:p-8 font-sans selection:bg-indigo-500/30">
       <div className="max-w-7xl mx-auto space-y-6">
         
         {/* Top Navigation Bar */}
@@ -239,7 +239,7 @@ const Dashboard = () => {
 
         {/* 4-7-8 Breathing Wind Down Interactive Modal */}
         {isWindDownActive && (
-          <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-2xl flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 bg-[#121316]/90 backdrop-blur-2xl flex items-center justify-center p-4">
             <div className="max-w-md w-full glass-panel p-8 rounded-3xl border border-indigo-500/40 text-center space-y-6 relative overflow-hidden shadow-2xl">
               <div className="flex justify-between items-center">
                 <span className="text-xs font-black uppercase tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-300 to-pink-400">🌙 4-7-8 Wind-Down Pacer</span>

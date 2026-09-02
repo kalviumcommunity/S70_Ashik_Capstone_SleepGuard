@@ -20,9 +20,9 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center relative overflow-hidden text-slate-100 font-sans py-12">
-      <div className="absolute top-[10%] right-[-5%] w-[35vw] h-[35vw] bg-blue-600/20 rounded-full blur-[100px] floating-blob"></div>
-      <div className="absolute bottom-[5%] left-[-10%] w-[45vw] h-[45vw] bg-emerald-600/10 rounded-full blur-[100px] floating-blob" style={{ animationDelay: '3s' }}></div>
+    <div className="min-h-screen bg-[#18191c] flex items-center justify-center relative overflow-hidden text-neutral-100 font-sans py-12">
+      <div className="absolute top-[10%] right-[-5%] w-[35vw] h-[35vw] bg-neutral-700/10 rounded-full blur-[100px] floating-blob"></div>
+      <div className="absolute bottom-[5%] left-[-10%] w-[45vw] h-[45vw] bg-stone-700/10 rounded-full blur-[100px] floating-blob" style={{ animationDelay: '3s' }}></div>
 
       <div className="glass-panel p-10 rounded-3xl shadow-2xl w-full max-w-md z-10 mx-4 border-t border-l border-white/20 relative">
         <div className="mb-8 text-center">

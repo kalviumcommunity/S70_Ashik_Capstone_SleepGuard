@@ -43,10 +43,10 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center relative overflow-hidden text-slate-100 font-sans">
-      {/* Dynamic Background Elements */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-indigo-600/30 rounded-full blur-[100px] floating-blob"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[35vw] h-[35vw] bg-purple-600/20 rounded-full blur-[100px] floating-blob" style={{ animationDelay: '2s' }}></div>
+    <div className="min-h-screen bg-[#18191c] flex items-center justify-center relative overflow-hidden text-neutral-100 font-sans">
+      {/* Dynamic Background Elements in Soft Charcoal & Ash */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-neutral-700/10 rounded-full blur-[100px] floating-blob"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-[35vw] h-[35vw] bg-stone-700/10 rounded-full blur-[100px] floating-blob" style={{ animationDelay: '2s' }}></div>
 
       <div className="glass-panel p-10 rounded-3xl shadow-2xl w-full max-w-md z-10 mx-4 border-t border-l border-white/20 relative">
         

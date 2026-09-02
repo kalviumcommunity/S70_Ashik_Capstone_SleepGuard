@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #6366f1;
-  --color-secondary: #a855f7;
-  --color-background: #030712;
-  --color-surface: #0f172a;
+  --color-primary: #818cf8;
+  --color-secondary: #c084fc;
+  --color-background: #17181c; /* Ash Grey */
+  --color-surface: #202227; /* Dark Ash Panel */
 }
 
 @layer base {
@@ -15,18 +15,18 @@
       sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #030712;
-    color: #f8fafc;
+    background-color: #17181c;
+    color: #f3f4f6;
   }
 }
 
-/* Glassmorphic elements */
+/* Ash Grey Glassmorphism */
 .glass-panel {
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(32, 34, 40, 0.72);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
 }
 
 .glass-card-hover {
@@ -34,8 +34,9 @@
 }
 .glass-card-hover:hover {
   transform: translateY(-4px);
-  border-color: rgba(99, 102, 241, 0.3);
-  box-shadow: 0 12px 40px -10px rgba(99, 102, 241, 0.25);
+  background: rgba(38, 41, 48, 0.85);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 12px 40px -10px rgba(0, 0, 0, 0.6);
 }
 
 /* Breathing Orb Animation for Wind-down mode */
@@ -50,23 +51,23 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.4); }
-  50% { box-shadow: 0 0 35px rgba(168, 85, 247, 0.7); }
+  0%, 100% { box-shadow: 0 0 15px rgba(129, 140, 248, 0.35); }
+  50% { box-shadow: 0 0 35px rgba(192, 132, 252, 0.6); }
 }
 
 .animate-glow {
   animation: pulse-glow 3s infinite ease-in-out;
 }
 
-/* Floating background gradients */
+/* Floating background gradients in smoky ash & soft platinum */
 .floating-blob {
-  animation: float 12s infinite ease-in-out alternate;
+  animation: float 14s infinite ease-in-out alternate;
 }
 
 @keyframes float {
   0% { transform: translate(0px, 0px) scale(1); }
-  50% { transform: translate(-30px, 20px) scale(1.08); }
-  100% { transform: translate(20px, -20px) scale(0.95); }
+  50% { transform: translate(-25px, 20px) scale(1.05); }
+  100% { transform: translate(20px, -15px) scale(0.96); }
 }
 
 /* Custom Scrollbar */
@@ -75,12 +76,12 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.5);
+  background: rgba(23, 24, 28, 0.8);
 }
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #3a3d46;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #6366f1;
+  background: #525663;
 }
