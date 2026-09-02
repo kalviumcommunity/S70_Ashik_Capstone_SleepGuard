@@ -12,7 +12,7 @@ const Login = () => {
   const [previewUrl, setPreviewUrl] = useState('');
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
-  const { loginStep1, verifyOtp } = useContext(AuthContext);
+  const { loginStep1, verifyOtp, demoLogin } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleCredentialsSubmit = async (e) => {
@@ -87,6 +87,43 @@ const Login = () => {
             <button type="submit" className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-indigo-500/25 mt-4">
               Access Dashboard
             </button>
+
+            <div className="relative flex py-2 items-center">
+              <div className="flex-grow border-t border-slate-700/60"></div>
+              <span className="flex-shrink mx-3 text-xs text-slate-500 uppercase font-semibold">Or Quick Access</span>
+              <div className="flex-grow border-t border-slate-700/60"></div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    await demoLogin('Student');
+                    navigate('/dashboard');
+                  } catch (err) {
+                    setError('Demo login failed');
+                  }
+                }}
+                className="flex items-center justify-center gap-1.5 py-2.5 px-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-bold rounded-xl transition"
+              >
+                <span>🎓</span> Demo Student
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    await demoLogin('Parent');
+                    navigate('/dashboard');
+                  } catch (err) {
+                    setError('Demo login failed');
+                  }
+                }}
+                className="flex items-center justify-center gap-1.5 py-2.5 px-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-bold rounded-xl transition"
+              >
+                <span>🛡️</span> Demo Parent
+              </button>
+            </div>
           </form>
         ) : (
           <form onSubmit={handleOtpSubmit} className="space-y-5">

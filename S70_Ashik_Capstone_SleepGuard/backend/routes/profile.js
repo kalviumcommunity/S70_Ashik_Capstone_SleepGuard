@@ -17,7 +17,7 @@ router.get('/', protect, async (req, res) => {
 // Update Bedtime Settings
 router.put('/bedtime', protect, async (req, res) => {
   try {
-    const { bedtime, wakeTime } = req.body;
+    const { bedtime, wakeTime, screenTimeLimit } = req.body;
     
     // Allow student to update their own, or parent to update their child's (simplified for now)
     const user = await User.findById(req.user.userId);
@@ -25,13 +25,15 @@ router.put('/bedtime', protect, async (req, res) => {
 
     if (bedtime) user.bedtime = bedtime;
     if (wakeTime) user.wakeTime = wakeTime;
+    if (screenTimeLimit !== undefined) user.screenTimeLimit = screenTimeLimit;
 
     const updatedUser = await user.save();
     
     res.json({
       message: 'Sleep schedule updated successfully',
       bedtime: updatedUser.bedtime,
-      wakeTime: updatedUser.wakeTime
+      wakeTime: updatedUser.wakeTime,
+      screenTimeLimit: updatedUser.screenTimeLimit
     });
   } catch (error) {
     res.status(500).json({ message: 'Server Error', error: error.message });
