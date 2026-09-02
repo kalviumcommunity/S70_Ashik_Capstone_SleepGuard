@@ -174,7 +174,7 @@ const Landing = () => {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
               </div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-slate-100 text-base tracking-tight">SleepGuard</span>
+                <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-300 to-fuchsia-400 text-base tracking-tight">SleepGuard</span>
                 <span className="text-[11px] font-medium text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700">SaaS v2.4</span>
               </div>
             </Link>
@@ -216,7 +216,9 @@ const Landing = () => {
 
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-100 tracking-tight leading-[1.15] mb-6">
           Reclaim restorative sleep from <br />
-          <span className="text-indigo-400">late-night digital drag.</span>
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-300 to-fuchsia-400">
+            late-night digital drag.
+          </span>
         </h1>
 
         <p className="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed mb-10">
@@ -292,7 +294,7 @@ const Landing = () => {
         <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">Interactive Telemetry Tool</span>
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 mt-1">
-            Late-Night Screen Disruption Simulator
+            Late-Night Screen <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-300 to-indigo-300">Disruption Simulator</span>
           </h2>
           <p className="text-slate-400 text-sm mt-2">
             Select mobile applications to simulate late-night screen time and inspect real-time melatonin delay, blue light burden, and automated parent alerting.
@@ -352,7 +354,7 @@ const Landing = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="saas-card-subtle p-4">
                   <div className="text-xs text-slate-400 font-medium">Estimated Sleep Delay</div>
-                  <div className="text-2xl font-bold text-indigo-400 mt-1">+{totalDelay} <span className="text-xs text-slate-400 font-normal">mins</span></div>
+                  <div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-400 mt-1">+{totalDelay} <span className="text-xs text-slate-400 font-normal">mins</span></div>
                   <div className="text-[11px] text-slate-500 mt-1">Melatonin suppression onset</div>
                 </div>
 
@@ -397,7 +399,7 @@ const Landing = () => {
         <div className="text-center max-w-2xl mx-auto mb-10">
           <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">Sleep Science Utility</span>
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 mt-1">
-            90-Minute REM Sleep Cycle Calculator
+            90-Minute REM <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-300 to-amber-300">Sleep Cycle Calculator</span>
           </h2>
           <p className="text-slate-400 text-sm mt-2">
             Human sleep operates in 90-minute ultradian cycles. Waking up midway through deep non-REM stages causes sleep inertia. Select your wake-up goal:
@@ -429,7 +431,7 @@ const Landing = () => {
                     Recommended
                   </span>
                 )}
-                <div className="text-2xl font-bold text-slate-100">{item.time}</div>
+                <div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-indigo-200 to-fuchsia-300">{item.time}</div>
                 <div className="text-xs text-indigo-400 font-medium mt-1">{item.hours} hrs ({item.cycles} complete cycles)</div>
                 <div className="text-[11px] text-slate-500 mt-1.5">Includes 15-min sleep onset buffer</div>
               </div>
@@ -443,7 +445,7 @@ const Landing = () => {
         <div className="text-center max-w-2xl mx-auto mb-10">
           <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">Interactive Assessment</span>
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 mt-1">
-            Sleep Quality & Screen Diagnostic
+            Sleep Quality & <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-300">Screen Diagnostic</span>
           </h2>
           <p className="text-slate-400 text-sm mt-2">
             Complete a 30-second assessment to diagnose late-night digital bottlenecks and receive personalized sleep hygiene recommendations.
@@ -482,7 +484,7 @@ const Landing = () => {
                 📊
               </div>
               <div>
-                <h3 className="text-lg font-bold text-slate-100">Diagnosis: <span className="text-indigo-400">{quizAnswers[1]?.type || 'Late-Night Digital Scroller'}</span></h3>
+                <h3 className="text-lg font-bold text-slate-100">Diagnosis: <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-orange-400 to-rose-400">{quizAnswers[1]?.type || 'Late-Night Digital Scroller'}</span></h3>
                 <p className="text-slate-400 text-xs leading-relaxed max-w-md mx-auto mt-2">
                   Evening stimulation is suppressing your melatonin cycle and pushing REM sleep into early morning hours. SleepGuard can enforce automated curfews and bedtime wind-down reminders.
                 </p>
@@ -504,7 +506,7 @@ const Landing = () => {
       <section id="features" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800">
         <div className="text-center max-w-2xl mx-auto mb-8">
           <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">Tailored Experience</span>
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 mt-1">Built for Students, Trusted by Parents</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 mt-1">Built for Students, <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-300 to-fuchsia-400">Trusted by Parents</span></h2>
         </div>
 
         <div className="flex justify-center mb-8">

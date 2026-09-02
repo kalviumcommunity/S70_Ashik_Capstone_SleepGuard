@@ -207,7 +207,7 @@ const Dashboard = () => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-slate-100 text-sm tracking-tight">SleepGuard Console</span>
+                <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-300 to-fuchsia-400 text-sm tracking-tight">SleepGuard Console</span>
                 <span className="text-[10px] font-semibold text-indigo-400 bg-indigo-950/60 px-2 py-0.5 rounded border border-indigo-500/30">
                   {user?.role === 'Parent' ? 'Parental Hub' : 'Student Portal'}
                 </span>
@@ -457,7 +457,7 @@ const Dashboard = () => {
             {/* AI Sleep Insights Box */}
             <div className="p-4 bg-slate-900/80 rounded-lg border border-slate-800 space-y-2">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">AI Sleep & Screen Hygiene Analysis</span>
+                <span className="text-xs font-bold uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-300 to-fuchsia-400">✨ AI Sleep & Screen Hygiene Analysis</span>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed">
                 {insights?.aiSuggestion || 'Collecting late-night telemetry to generate sleep hygiene insights...'}
