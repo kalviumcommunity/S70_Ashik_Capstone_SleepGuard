@@ -203,12 +203,12 @@ const Dashboard = () => {
         {/* Top Navigation Bar */}
         <header className="glass-panel rounded-2xl p-5 flex flex-wrap justify-between items-center gap-4 border-t border-l border-white/10 shadow-xl">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 bg-gradient-to-tr from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
+            <div className="w-11 h-11 bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-xl font-bold text-white tracking-tight">SleepGuard</h1>
+                <h1 className="text-xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-indigo-300 to-fuchsia-400">SleepGuard</h1>
                 <span className="text-[10px] bg-indigo-500/20 text-indigo-300 font-bold px-2 py-0.5 rounded uppercase tracking-wider border border-indigo-500/30">
                   {user?.role === 'Parent' ? '🛡️ Parental Hub' : '🎓 Student Portal'}
                 </span>
@@ -220,7 +220,7 @@ const Dashboard = () => {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsWindDownActive(true)}
-              className="px-3.5 py-2 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 hover:text-white text-xs font-bold rounded-xl transition border border-indigo-500/40 flex items-center gap-1.5 animate-glow"
+              className="px-3.5 py-2 bg-gradient-to-r from-indigo-600/40 via-purple-600/40 to-pink-600/40 hover:from-indigo-600/60 hover:to-pink-600/60 text-indigo-200 hover:text-white text-xs font-bold rounded-xl transition border border-indigo-500/40 flex items-center gap-1.5 animate-glow shadow-lg shadow-indigo-500/20"
             >
               <span>🌙</span> Wind-Down Mode
             </button>
@@ -242,7 +242,7 @@ const Dashboard = () => {
           <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-2xl flex items-center justify-center p-4">
             <div className="max-w-md w-full glass-panel p-8 rounded-3xl border border-indigo-500/40 text-center space-y-6 relative overflow-hidden shadow-2xl">
               <div className="flex justify-between items-center">
-                <span className="text-xs font-bold uppercase tracking-widest text-indigo-400">🌙 4-7-8 Wind-Down Pacer</span>
+                <span className="text-xs font-black uppercase tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-300 to-pink-400">🌙 4-7-8 Wind-Down Pacer</span>
                 <button 
                   onClick={() => setIsWindDownActive(false)}
                   className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold transition"
@@ -261,8 +261,8 @@ const Dashboard = () => {
                   }}
                 >
                   <div className="text-center">
-                    <div className="text-2xl font-black text-white">{breathPhase}</div>
-                    <div className="text-4xl font-extrabold text-indigo-300 font-mono mt-1">{breathTimer}s</div>
+                    <div className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-indigo-200 to-white">{breathPhase}</div>
+                    <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-300 to-indigo-200 font-mono mt-1">{breathTimer}s</div>
                   </div>
                 </div>
               </div>
@@ -289,8 +289,8 @@ const Dashboard = () => {
             <div className="flex items-center gap-3">
               <span className="text-2xl">👨‍👩‍👧</span>
               <div>
-                <div className="text-xs uppercase tracking-wider font-bold text-blue-300">Active Parental Monitoring</div>
-                <div className="text-sm font-semibold text-white">Monitoring: <span className="text-indigo-300">{insights?.monitoredStudentName || 'Alex Jenkins (Student)'}</span></div>
+                <div className="text-xs uppercase tracking-wider font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-300 to-indigo-300">Active Parental Monitoring</div>
+                <div className="text-sm font-semibold text-white">Monitoring: <span className="text-indigo-300 font-bold">{insights?.monitoredStudentName || 'Alex Jenkins (Student)'}</span></div>
               </div>
             </div>
             <div className="text-xs text-slate-300 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
@@ -305,21 +305,21 @@ const Dashboard = () => {
           {/* Profile Card */}
           <div className="glass-panel p-6 rounded-2xl border-t border-l border-white/10 flex flex-col justify-between">
             <div>
-              <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Active Profile</div>
-              <div className="text-xl font-bold text-white truncate">{user?.name}</div>
+              <div className="text-xs font-black uppercase tracking-wider mb-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-300 to-cyan-400">Active Profile</div>
+              <div className="text-xl font-black text-white truncate">{user?.name}</div>
               <div className="text-slate-400 text-xs mt-1 truncate">{user?.email}</div>
             </div>
             <div className="mt-4 pt-4 border-t border-slate-800 flex justify-between items-center">
               <span className="text-xs text-slate-400">Target Bedtime:</span>
-              <span className="text-sm font-bold text-indigo-300">{bedtime}</span>
+              <span className="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-indigo-300">{bedtime}</span>
             </div>
           </div>
 
           {/* Sleep Health Score Card */}
           <div className="glass-panel p-6 rounded-2xl border-t border-l border-white/10 flex items-center justify-between">
             <div>
-              <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Sleep Score</div>
-              <div className={`text-4xl font-extrabold ${healthData.color}`}>{healthData.score}</div>
+              <div className="text-xs font-black uppercase tracking-wider mb-1 text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Sleep Score</div>
+              <div className={`text-4xl font-black ${healthData.color}`}>{healthData.score}</div>
               <div className="text-slate-400 text-xs mt-1 font-medium">{healthData.msg}</div>
             </div>
             <div className="w-16 h-16 rounded-full flex items-center justify-center relative shrink-0">
@@ -344,7 +344,7 @@ const Dashboard = () => {
           {/* Bedtime & Limit Settings Form */}
           <div className="glass-panel p-6 rounded-2xl border-t border-l border-white/10 md:col-span-2">
             <div className="flex justify-between items-center mb-3">
-              <div className="text-slate-400 text-xs font-bold uppercase tracking-wider">
+              <div className="text-xs font-black uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-indigo-300 to-pink-300">
                 {user?.role === 'Parent' ? "Child's Sleep Schedule & Restrictions" : 'My Sleep Schedule'}
               </div>
             </div>
@@ -381,7 +381,7 @@ const Dashboard = () => {
               <div className="flex items-end">
                 <button 
                   type="submit" 
-                  className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white py-2.5 rounded-lg text-xs font-bold transition shadow-lg shadow-indigo-500/25"
+                  className="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:opacity-90 text-white py-2.5 rounded-lg text-xs font-bold transition shadow-lg shadow-indigo-500/25"
                 >
                   Save Goal
                 </button>
@@ -406,7 +406,7 @@ const Dashboard = () => {
             
             <div className="relative z-10 space-y-5">
               <div className="flex justify-between items-center">
-                <h2 className="text-lg font-bold flex items-center gap-2 text-indigo-300">
+                <h2 className="text-lg font-black flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-purple-300 to-pink-400">
                   <span>✨</span> AI Sleep & Screen Analysis
                 </h2>
                 <span className="text-xs bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-full font-semibold border border-indigo-500/30">
@@ -420,7 +420,7 @@ const Dashboard = () => {
 
               {/* Weekly Trend Bar Chart */}
               <div>
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex justify-between">
+                <h3 className="text-xs font-black uppercase tracking-wider mb-3 flex justify-between text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-300">
                   <span>7-Day Late Night Usage Trend</span>
                   <span className="text-slate-500">Target: &lt; {screenTimeLimit}m/night</span>
                 </h3>
@@ -453,8 +453,8 @@ const Dashboard = () => {
           <div className="glass-panel p-6 rounded-2xl border-t border-l border-white/10 flex flex-col justify-between">
             <div>
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Interactive App Locks</h3>
-                <span className="text-[10px] text-indigo-400">Curfew Defense</span>
+                <h3 className="text-xs font-black uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-300">Interactive App Locks</h3>
+                <span className="text-[10px] text-indigo-400 font-bold bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">Curfew Defense</span>
               </div>
               
               <div className="space-y-3">
@@ -474,7 +474,7 @@ const Dashboard = () => {
 
             {/* Quick Testing Simulator */}
             <div className="mt-6 pt-4 border-t border-slate-800 space-y-2">
-              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Simulate Live Telemetry</div>
+              <div className="text-[11px] font-black uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-300">Simulate Live Telemetry</div>
               <div className="grid grid-cols-3 gap-1.5">
                 <button
                   disabled={simulating}
@@ -512,7 +512,7 @@ const Dashboard = () => {
           {/* Notifications Panel */}
           <div className="glass-panel rounded-2xl p-6 border-t border-l border-white/10">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-base font-bold text-orange-400 flex items-center gap-2">
+              <h2 className="text-base font-black flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400">
                 <span>⚠️</span> Parent Alert Feed
               </h2>
               {notifications.some(n => !n.isRead) && (
@@ -558,7 +558,7 @@ const Dashboard = () => {
           {/* Usage Data History */}
           <div className="glass-panel rounded-2xl p-6 border-t border-l border-white/10 flex flex-col">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-base font-bold text-white">Late-Night Session Log</h2>
+              <h2 className="text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-300 to-indigo-300">Late-Night Session Log</h2>
               <span className="text-xs text-slate-400">{usageData.length} recorded</span>
             </div>
             

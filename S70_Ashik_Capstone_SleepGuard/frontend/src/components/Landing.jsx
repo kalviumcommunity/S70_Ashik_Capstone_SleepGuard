@@ -190,11 +190,11 @@ const Landing = () => {
       <header className="relative z-20 border-b border-white/5 backdrop-blur-xl bg-slate-950/60 sticky top-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex justify-between items-center">
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-gradient-to-tr from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition">
+            <div className="w-10 h-10 bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
             </div>
             <div>
-              <span className="text-xl font-extrabold text-white tracking-tight">SleepGuard</span>
+              <span className="text-xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-300 to-fuchsia-400">SleepGuard</span>
               <span className="text-[10px] ml-2 text-indigo-400 font-mono font-bold uppercase tracking-wider bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20">v2.4 Active</span>
             </div>
           </Link>
@@ -210,7 +210,7 @@ const Landing = () => {
             ) : (
               <>
                 <Link to="/login" className="text-xs font-bold text-slate-300 hover:text-white transition px-3 py-2">Sign In</Link>
-                <Link to="/register" className="px-4 py-2 text-xs font-bold bg-white text-slate-950 rounded-xl hover:bg-slate-200 transition shadow-lg shadow-white/10">
+                <Link to="/register" className="px-4 py-2 text-xs font-bold bg-gradient-to-r from-white via-slate-100 to-slate-200 text-slate-950 rounded-xl hover:opacity-90 transition shadow-lg shadow-white/10">
                   Get Started Free
                 </Link>
               </>
@@ -223,12 +223,12 @@ const Landing = () => {
       <section className="relative z-10 pt-16 pb-20 px-4 max-w-7xl mx-auto text-center">
         <div className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 backdrop-blur-md">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-          <span className="text-xs font-bold tracking-wider text-indigo-300 uppercase">Interactive Sleep & Usage Intelligence</span>
+          <span className="text-xs font-bold tracking-wider uppercase text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-indigo-300 to-pink-400">Interactive Sleep & Usage Intelligence</span>
         </div>
 
         <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight max-w-5xl mx-auto leading-[1.1] mb-6">
-          Reclaim Your Sleep From <br className="hidden sm:inline" />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-emerald-400">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-100 via-slate-200 to-slate-400">Reclaim Your Sleep From</span> <br className="hidden sm:inline" />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-fuchsia-400 to-amber-300 animate-pulse">
             Late-Night Screen Drag.
           </span>
         </h1>
@@ -283,8 +283,10 @@ const Landing = () => {
       <section id="simulator" className="relative z-10 py-20 px-4 max-w-7xl mx-auto border-t border-slate-900">
         <div className="text-center mb-12">
           <div className="text-xs font-mono font-bold uppercase tracking-widest text-indigo-400 mb-2">Interactive Lab 01</div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">Interactive Late-Night Screen Simulator</h2>
-          <p className="text-slate-400 text-sm max-w-2xl mx-auto mt-2">
+          <h2 className="text-3xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400">
+            Interactive Late-Night Screen Simulator
+          </h2>
+          <p className="text-slate-400 text-sm max-w-2xl mx-auto mt-3">
             Click on active apps to simulate late-night phone usage and inspect real-time blue light impact, REM delay, and parental trigger states.
           </p>
         </div>
@@ -344,7 +346,7 @@ const Landing = () => {
           <div className="lg:col-span-6 space-y-5">
             <div className="glass-panel p-6 rounded-3xl border border-white/10 space-y-6">
               <div className="flex justify-between items-center">
-                <h3 className="text-base font-bold text-white">Live Disruption Metrics</h3>
+                <h3 className="text-base font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-300">Live Disruption Metrics</h3>
                 <span className={`text-xs font-bold px-3 py-1 rounded-full ${hasNonEdu ? 'bg-red-500/20 text-red-300 border border-red-500/30 animate-pulse' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'}`}>
                   {hasNonEdu ? '🚨 Parent Alert Triggered' : '✅ Compliant (Study Mode)'}
                 </span>
@@ -353,13 +355,13 @@ const Landing = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
                   <div className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Sleep Onset Delay</div>
-                  <div className="text-3xl font-extrabold text-indigo-400">+{totalDelay} <span className="text-sm font-normal text-slate-400">mins</span></div>
+                  <div className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-400">+{totalDelay} <span className="text-sm font-normal text-slate-400">mins</span></div>
                   <div className="text-[10px] text-slate-500 mt-1">Delay to natural melatonin peak</div>
                 </div>
 
                 <div className="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
                   <div className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Blue Light Load</div>
-                  <div className={`text-3xl font-extrabold ${avgBlueLight > 60 ? 'text-orange-400' : 'text-emerald-400'}`}>{avgBlueLight}%</div>
+                  <div className={`text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r ${avgBlueLight > 60 ? 'from-amber-400 to-rose-400' : 'from-teal-300 to-emerald-400'}`}>{avgBlueLight}%</div>
                   <div className="text-[10px] text-slate-500 mt-1">Circadian rhythm suppression</div>
                 </div>
               </div>
@@ -368,7 +370,7 @@ const Landing = () => {
               <div>
                 <div className="flex justify-between text-xs font-bold mb-2">
                   <span className="text-slate-300">Sleep Health Penalty</span>
-                  <span className={totalDelay > 40 ? 'text-red-400' : 'text-emerald-400'}>
+                  <span className={totalDelay > 40 ? 'text-red-400 font-black' : 'text-emerald-400 font-black'}>
                     {Math.min(100, Math.round(totalDelay * 1.2))}% Disrupted
                   </span>
                 </div>
@@ -398,8 +400,10 @@ const Landing = () => {
       <section id="calculator" className="relative z-10 py-20 px-4 max-w-7xl mx-auto border-t border-slate-900">
         <div className="text-center mb-12">
           <div className="text-xs font-mono font-bold uppercase tracking-widest text-purple-400 mb-2">Interactive Lab 02</div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">90-Minute REM Cycle Bedtime Calculator</h2>
-          <p className="text-slate-400 text-sm max-w-2xl mx-auto mt-2">
+          <h2 className="text-3xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-amber-300">
+            90-Minute REM Cycle Bedtime Calculator
+          </h2>
+          <p className="text-slate-400 text-sm max-w-2xl mx-auto mt-3">
             Human sleep follows 90-minute ultradian cycles. Waking up in the middle of a deep sleep cycle causes morning grogginess. Choose your wake-up goal:
           </p>
         </div>
@@ -425,11 +429,11 @@ const Landing = () => {
                 className={`p-5 rounded-2xl border text-center transition-all ${item.recommended ? 'bg-indigo-600/20 border-indigo-500/50 shadow-xl shadow-indigo-500/10 scale-105' : 'bg-slate-900/60 border-slate-800 hover:border-slate-700'}`}
               >
                 {item.recommended && (
-                  <span className="text-[9px] font-bold uppercase tracking-widest bg-indigo-500 text-white px-2 py-0.5 rounded-full inline-block mb-2">
+                  <span className="text-[9px] font-bold uppercase tracking-widest bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-2 py-0.5 rounded-full inline-block mb-2">
                     Optimal Goal
                   </span>
                 )}
-                <div className="text-2xl font-black text-white">{item.time}</div>
+                <div className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-indigo-200 to-fuchsia-300">{item.time}</div>
                 <div className="text-xs text-indigo-300 font-semibold mt-1">{item.hours} hours ({item.cycles} cycles)</div>
                 <div className="text-[10px] text-slate-400 mt-2">Natural wakeup without alarm shock</div>
               </div>
@@ -442,8 +446,10 @@ const Landing = () => {
       <section id="quiz" className="relative z-10 py-20 px-4 max-w-7xl mx-auto border-t border-slate-900">
         <div className="text-center mb-12">
           <div className="text-xs font-mono font-bold uppercase tracking-widest text-emerald-400 mb-2">Interactive Lab 03</div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">What's Keeping You Awake? (30-Sec Habit Check)</h2>
-          <p className="text-slate-400 text-sm max-w-2xl mx-auto mt-2">
+          <h2 className="text-3xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">
+            What's Keeping You Awake?
+          </h2>
+          <p className="text-slate-400 text-sm max-w-2xl mx-auto mt-3">
             Answer 3 quick questions to discover your sleep archetype and get an instant AI action plan.
           </p>
         </div>
@@ -456,7 +462,7 @@ const Landing = () => {
                 <span className="text-indigo-400">{Math.round(((quizStep + 1) / quizQuestions.length) * 100)}%</span>
               </div>
 
-              <h3 className="text-xl font-bold text-white">{quizQuestions[quizStep].question}</h3>
+              <h3 className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-indigo-200">{quizQuestions[quizStep].question}</h3>
 
               <div className="space-y-3">
                 {quizQuestions[quizStep].options.map((opt, idx) => (
@@ -479,7 +485,7 @@ const Landing = () => {
               <div className="w-16 h-16 bg-gradient-to-tr from-emerald-500 to-indigo-600 rounded-2xl mx-auto flex items-center justify-center text-2xl shadow-xl shadow-indigo-500/20">
                 ✨
               </div>
-              <h3 className="text-2xl font-bold text-white">Your Sleep Archetype: <span className="text-indigo-300">{quizAnswers[1]?.type || 'Midnight Doomscroller'}</span></h3>
+              <h3 className="text-2xl font-black text-white">Your Sleep Archetype: <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-indigo-300 to-pink-400">{quizAnswers[1]?.type || 'Midnight Doomscroller'}</span></h3>
               <p className="text-slate-300 text-sm leading-relaxed max-w-md mx-auto">
                 Late-night mobile stimulation is delaying your core sleep stages. SleepGuard's AI automatically buffers usage limits to protect your natural morning alertness.
               </p>
@@ -499,8 +505,10 @@ const Landing = () => {
       {/* 🎯 Audience Perspectives (Tabs) */}
       <section className="relative z-10 py-20 px-4 max-w-7xl mx-auto border-t border-slate-900">
         <div className="text-center mb-10">
-          <h2 className="text-3xl font-extrabold text-white">Built for Students, Trusted by Parents</h2>
-          <p className="text-slate-400 text-sm max-w-xl mx-auto mt-2">Explore tailored workflows built for each user perspective.</p>
+          <h2 className="text-3xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-rose-400 to-indigo-400">
+            Built for Students, Trusted by Parents
+          </h2>
+          <p className="text-slate-400 text-sm max-w-xl mx-auto mt-3">Explore tailored workflows built for each user perspective.</p>
         </div>
 
         {/* Tab Controls */}
