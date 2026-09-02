@@ -267,24 +267,67 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Key Metric Highlights */}
-      <section className="py-8 border-y border-slate-800 bg-[#0c1220]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          <div>
-            <div className="text-2xl font-bold text-slate-100">85%</div>
-            <div className="text-xs font-medium text-slate-400 mt-0.5">Average Goal Adherence</div>
+      {/* Key Metric Highlights - Infinite Moving Marquee */}
+      <section className="py-6 border-y border-slate-800 bg-[#0c1220] relative overflow-hidden">
+        {/* Left & Right Gradient Fade Masks */}
+        <div className="absolute left-0 inset-y-0 w-24 bg-gradient-to-r from-[#0c1220] to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute right-0 inset-y-0 w-24 bg-gradient-to-l from-[#0c1220] to-transparent z-10 pointer-events-none"></div>
+
+        <div className="animate-marquee flex items-center gap-16">
+          {/* First set of items */}
+          <div className="flex items-center gap-16 shrink-0">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">85%</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">Average Goal Adherence</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">&lt; 15 min</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">Sleep Onset Latency</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">Real-Time</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">Parental Curfew Telemetry</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">2FA OTP</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">Enterprise Account Security</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">90-Min Cycles</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">REM Sleep Optimization</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">Whitelisted</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">Study App Autonomy</div>
+            </div>
           </div>
-          <div>
-            <div className="text-2xl font-bold text-slate-100">&lt; 15 min</div>
-            <div className="text-xs font-medium text-slate-400 mt-0.5">Sleep Onset Latency</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-slate-100">Real-Time</div>
-            <div className="text-xs font-medium text-slate-400 mt-0.5">Parental Curfew Telemetry</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-slate-100">2FA OTP</div>
-            <div className="text-xs font-medium text-slate-400 mt-0.5">Enterprise Account Security</div>
+
+          {/* Duplicate set of items for seamless infinite loop */}
+          <div className="flex items-center gap-16 shrink-0">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">85%</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">Average Goal Adherence</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">&lt; 15 min</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">Sleep Onset Latency</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">Real-Time</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">Parental Curfew Telemetry</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">2FA OTP</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">Enterprise Account Security</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">90-Min Cycles</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">REM Sleep Optimization</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-100">Whitelisted</div>
+              <div className="text-xs font-medium text-slate-400 mt-0.5 whitespace-nowrap">Study App Autonomy</div>
+            </div>
           </div>
         </div>
       </section>
