@@ -174,20 +174,20 @@ const Landing = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#18191c] text-neutral-100 font-sans overflow-x-hidden selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-[#070d1e] text-slate-100 font-sans overflow-x-hidden selection:bg-indigo-500/30">
       
-      {/* Background Animated Atmosphere in Ash & Subtle Platinum Glow */}
+      {/* Background Animated Atmosphere in Deep Midnight Blue */}
       <div 
         className="fixed inset-0 pointer-events-none z-0 transition-transform duration-700 ease-out"
         style={{ transform: `translate(${mousePos.x}px, ${mousePos.y}px)` }}
       >
-        <div className="absolute top-[-15%] left-[-10%] w-[55vw] h-[55vw] bg-neutral-700/10 rounded-full blur-[140px] floating-blob"></div>
-        <div className="absolute top-[40%] right-[-15%] w-[50vw] h-[50vw] bg-stone-700/10 rounded-full blur-[140px] floating-blob" style={{ animationDelay: '3s' }}></div>
-        <div className="absolute bottom-[-10%] left-[25%] w-[45vw] h-[45vw] bg-zinc-700/10 rounded-full blur-[140px] floating-blob" style={{ animationDelay: '6s' }}></div>
+        <div className="absolute top-[-15%] left-[-10%] w-[55vw] h-[55vw] bg-blue-600/15 rounded-full blur-[140px] floating-blob"></div>
+        <div className="absolute top-[40%] right-[-15%] w-[50vw] h-[50vw] bg-indigo-600/15 rounded-full blur-[140px] floating-blob" style={{ animationDelay: '3s' }}></div>
+        <div className="absolute bottom-[-10%] left-[25%] w-[45vw] h-[45vw] bg-cyan-600/10 rounded-full blur-[140px] floating-blob" style={{ animationDelay: '6s' }}></div>
       </div>
 
       {/* Navigation */}
-      <header className="relative z-20 border-b border-white/5 backdrop-blur-xl bg-[#18191c]/80 sticky top-0">
+      <header className="relative z-20 border-b border-blue-900/40 backdrop-blur-xl bg-[#070d1e]/85 sticky top-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex justify-between items-center">
           <Link to="/" className="flex items-center gap-3 group">
             <div className="w-10 h-10 bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition">

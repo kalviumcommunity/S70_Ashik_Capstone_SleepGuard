@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #818cf8;
-  --color-secondary: #c084fc;
-  --color-background: #17181c; /* Ash Grey */
-  --color-surface: #202227; /* Dark Ash Panel */
+  --color-primary: #3b82f6;
+  --color-secondary: #8b5cf6;
+  --color-background: #070d1e; /* Deep Dark Blue */
+  --color-surface: #0e172e;    /* Dark Blue Panel */
 }
 
 @layer base {
@@ -15,18 +15,18 @@
       sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #17181c;
-    color: #f3f4f6;
+    background-color: #070d1e;
+    color: #f8fafc;
   }
 }
 
-/* Ash Grey Glassmorphism */
+/* Dark Blue Glassmorphism */
 .glass-panel {
-  background: rgba(32, 34, 40, 0.72);
+  background: rgba(14, 23, 46, 0.72);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
 }
 
 .glass-card-hover {
@@ -34,9 +34,9 @@
 }
 .glass-card-hover:hover {
   transform: translateY(-4px);
-  background: rgba(38, 41, 48, 0.85);
-  border-color: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 12px 40px -10px rgba(0, 0, 0, 0.6);
+  background: rgba(20, 32, 64, 0.85);
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 0 12px 40px -10px rgba(37, 99, 235, 0.3);
 }
 
 /* Breathing Orb Animation for Wind-down mode */
@@ -51,15 +51,15 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 15px rgba(129, 140, 248, 0.35); }
-  50% { box-shadow: 0 0 35px rgba(192, 132, 252, 0.6); }
+  0%, 100% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
+  50% { box-shadow: 0 0 35px rgba(139, 92, 246, 0.6); }
 }
 
 .animate-glow {
   animation: pulse-glow 3s infinite ease-in-out;
 }
 
-/* Floating background gradients in smoky ash & soft platinum */
+/* Floating background gradients in deep midnight blue & celestial violet */
 .floating-blob {
   animation: float 14s infinite ease-in-out alternate;
 }
@@ -76,12 +76,12 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(23, 24, 28, 0.8);
+  background: rgba(7, 13, 30, 0.8);
 }
 ::-webkit-scrollbar-thumb {
-  background: #3a3d46;
+  background: #1e293b;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #525663;
+  background: #3b82f6;
 }
