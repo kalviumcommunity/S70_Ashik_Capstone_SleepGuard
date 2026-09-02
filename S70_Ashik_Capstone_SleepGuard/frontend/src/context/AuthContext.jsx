@@ -38,6 +38,15 @@ export const AuthProvider = ({ children }) => {
     axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
   };
 
+  const demoLogin = async (role = 'Student') => {
+    const res = await axios.post('/auth/demo-login', { role });
+    localStorage.setItem('token', res.data.token);
+    localStorage.setItem('user', JSON.stringify(res.data.user));
+    setUser(res.data.user);
+    axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
+    return res.data;
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -46,7 +55,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, loginStep1, verifyOtp, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, loginStep1, verifyOtp, register, demoLogin, logout }}>
       {children}
     </AuthContext.Provider>
   );

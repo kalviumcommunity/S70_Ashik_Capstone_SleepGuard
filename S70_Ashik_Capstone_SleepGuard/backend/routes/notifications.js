@@ -13,7 +13,17 @@ router.get('/', protect, async (req, res) => {
   }
 });
 
-// Mark notification as read
+// Mark all notifications as read
+router.put('/read-all', protect, async (req, res) => {
+  try {
+    await Notification.updateMany({ userId: req.user.userId, isRead: false }, { isRead: true });
+    res.json({ message: 'All notifications marked as read' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+});
+
+// Mark single notification as read
 router.put('/:id/read', protect, async (req, res) => {
   try {
     const notification = await Notification.findById(req.params.id);

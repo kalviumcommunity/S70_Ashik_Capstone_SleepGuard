@@ -141,4 +141,101 @@ router.post('/verify-otp', async (req, res) => {
   }
 });
 
+// Demo Login (Instant evaluation login for Students & Parents)
+router.post('/demo-login', async (req, res) => {
+  try {
+    const { role = 'Student' } = req.body;
+    const email = role === 'Parent' ? 'parent.demo@sleepguard.app' : 'student.demo@sleepguard.app';
+    const name = role === 'Parent' ? 'Sarah Jenkins (Parent)' : 'Alex Jenkins (Student)';
+
+    let user = await User.findOne({ email });
+    if (!user) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash('DemoPass123!', salt);
+      user = await User.create({
+        name,
+        email,
+        password: hashedPassword,
+        role,
+        bedtime: '22:30',
+        wakeTime: '06:30',
+        screenTimeLimit: 30
+      });
+    }
+
+    // If Student and has no sessions, seed some demo sessions
+    const SleepSession = require('../models/SleepSession');
+    const Notification = require('../models/Notification');
+    const sessionCount = await SleepSession.countDocuments({ userId: user._id });
+    
+    if (sessionCount === 0 && role === 'Student') {
+      const now = Date.now();
+      const sampleSessions = [
+        {
+          userId: user._id,
+          startTime: new Date(now - 1 * 86400000 + 45 * 60000),
+          endTime: new Date(now - 1 * 86400000 + 115 * 60000),
+          totalScreenTime: 70,
+          appsUsed: [
+            { appName: 'Instagram', durationMinutes: 45, category: 'Social Media' },
+            { appName: 'Duolingo', durationMinutes: 25, category: 'Educational' }
+          ]
+        },
+        {
+          userId: user._id,
+          startTime: new Date(now - 2 * 86400000 + 30 * 60000),
+          endTime: new Date(now - 2 * 86400000 + 80 * 60000),
+          totalScreenTime: 50,
+          appsUsed: [
+            { appName: 'TikTok', durationMinutes: 35, category: 'Social Media' },
+            { appName: 'Khan Academy', durationMinutes: 15, category: 'Educational' }
+          ]
+        },
+        {
+          userId: user._id,
+          startTime: new Date(now - 3 * 86400000 + 15 * 60000),
+          endTime: new Date(now - 3 * 86400000 + 40 * 60000),
+          totalScreenTime: 25,
+          appsUsed: [
+            { appName: 'Quizlet', durationMinutes: 25, category: 'Educational' }
+          ]
+        },
+        {
+          userId: user._id,
+          startTime: new Date(now - 4 * 86400000 + 60 * 60000),
+          endTime: new Date(now - 4 * 86400000 + 140 * 60000),
+          totalScreenTime: 80,
+          appsUsed: [
+            { appName: 'Call of Duty Mobile', durationMinutes: 50, category: 'Games' },
+            { appName: 'YouTube', durationMinutes: 30, category: 'Social Media' }
+          ]
+        }
+      ];
+      await SleepSession.insertMany(sampleSessions);
+
+      // Add a sample parent alert
+      await Notification.create({
+        userId: user._id,
+        studentId: user._id,
+        title: 'Late Night Phone Usage Detected',
+        message: `${user.name} was active on Instagram & TikTok past 11:30 PM.`
+      });
+    }
+
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.JWT_SECRET || 'secret123',
+      { expiresIn: '1d' }
+    );
+
+    res.json({
+      token,
+      user: { id: user._id, name: user.name, email: user.email, role: user.role }
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+});
+
 module.exports = router;
+
